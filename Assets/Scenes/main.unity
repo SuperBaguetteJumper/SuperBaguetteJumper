@@ -79,14 +79,14 @@ LightmapSettings:
     m_PVRBounces: 2
     m_PVREnvironmentSampleCount: 500
     m_PVREnvironmentReferencePointCount: 2048
-    m_PVRFilteringMode: 2
-    m_PVRDenoiserTypeDirect: 0
-    m_PVRDenoiserTypeIndirect: 0
-    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
     m_PVREnvironmentMIS: 0
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -369,12 +369,14 @@ PrefabInstance:
         type: 3}
       propertyPath: panelInGameMenu
       value: 
-      objectReference: {fileID: 1872545307}
+      objectReference: {fileID: 1872545307, guid: 225237505bd2d08448e734986949ab5a,
+        type: 3}
     - target: {fileID: 114078314171263514, guid: 68480a01e4a00ab45b3d746ae2fc86ee,
         type: 3}
       propertyPath: m_PanelInGameMenu
       value: 
-      objectReference: {fileID: 1872545307}
+      objectReference: {fileID: 1872545307, guid: 18fc0e399ffc63641b8c4cb50030cd6c,
+        type: 3}
     - target: {fileID: 114331011742233390, guid: 68480a01e4a00ab45b3d746ae2fc86ee,
         type: 3}
       propertyPath: sfxXmlSetup
@@ -753,7 +755,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 224894993102695976, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224894993102695976, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: [{fileID: 114985856664380818, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}, {fileID: 114369200730934218, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}, {fileID: 114101811516874134, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}, {fileID: 114954458608286408, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}, {fileID: 114959695018718942, guid: 2d4cc07e22d85374b8d15cd15f4e18e1,
+        type: 3}]
   m_SourcePrefab: {fileID: 100100000, guid: 2d4cc07e22d85374b8d15cd15f4e18e1, type: 3}
 --- !u!1 &1872545306 stripped
 GameObject:
