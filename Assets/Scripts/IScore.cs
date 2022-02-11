@@ -1,7 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IScore {
-	int Score { get; }
+﻿public interface IScore {
+	public int Score { get; }
 }

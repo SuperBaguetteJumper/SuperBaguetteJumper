@@ -1,32 +1,28 @@
-﻿namespace STUDENT_NAME
-{
-	using System.Collections;
-	using System.Collections.Generic;
-	using UnityEngine;
-	using UnityEngine.UI;
-	using SDD.Events;
+﻿using System.Collections;
+using Common;
 
-	public class HudManager : Manager<HudManager>
-	{
+public class HudManager : Manager<HudManager> {
+	#region Manager implementation
 
-		//[Header("HudManager")]
-		#region Labels & Values
-		// TO DO
-		#endregion
-
-		#region Manager implementation
-		protected override IEnumerator InitCoroutine()
-		{
-			yield break;
-		}
-		#endregion
-
-		#region Callbacks to GameManager events
-		protected override void GameStatisticsChanged(GameStatisticsChangedEvent e)
-		{
-			//TO DO
-		}
-		#endregion
-
+	protected override IEnumerator InitCoroutine() {
+		yield break;
 	}
+
+	#endregion
+
+	#region Callbacks to GameManager events
+
+	protected override void GameStatisticsChanged(GameStatisticsChangedEvent e) {
+		// TODO
+	}
+
+	#endregion
+
+	// [Header("HudManager")]
+
+	#region Labels & Values
+
+	// TODO
+
+	#endregion
 }
