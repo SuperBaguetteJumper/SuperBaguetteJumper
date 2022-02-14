@@ -1,35 +1,29 @@
-﻿namespace STUDENT_NAME
-{
-	using UnityEngine;
+﻿using Common;
+using UnityEngine;
 
-	public class CameraController : SimpleGameStateObserver
-	{
-		[SerializeField] Transform m_Target;
-		Transform m_Transform;
-		Vector3 m_InitPosition;
+public class CameraController : SimpleGameStateObserver {
+	[SerializeField] private Transform target;
+	private Vector3 initPosition;
+	private Transform cameraTransform;
 
-		void ResetCamera()
-		{
-			m_Transform.position = m_InitPosition;
-		}
+	protected override void Awake() {
+		base.Awake();
+		this.cameraTransform = this.transform;
+		this.initPosition = this.cameraTransform.position;
+	}
 
-		protected override void Awake()
-		{
-			base.Awake();
-			m_Transform = transform;
-			m_InitPosition = m_Transform.position;
-		}
+	private void Update() {
+		if (!GameManager.Instance.IsPlaying)
+			return;
 
-		void Update()
-		{
-			if (!GameManager.Instance.IsPlaying) return;
+		// TODO
+	}
 
-			// TO DO
-		}
+	private void ResetCamera() {
+		this.cameraTransform.position = this.initPosition;
+	}
 
-		protected override void GameMenu(GameMenuEvent e)
-		{
-			ResetCamera();
-		}
+	protected override void GameMenu(GameMenuEvent e) {
+		this.ResetCamera();
 	}
 }

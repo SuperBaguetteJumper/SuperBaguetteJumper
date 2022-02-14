@@ -324,7 +324,6 @@ GameObject:
   - component: {fileID: 222264116741896368}
   - component: {fileID: 114471455993453366}
   - component: {fileID: 114313607121973324}
-  - component: {fileID: 114959695018718942}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -446,19 +445,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114959695018718942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1218610134721272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1012ad8573493f64faa1d5568883e859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SoundName: 
 --- !u!1 &1219465846299514
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,7 +457,6 @@ GameObject:
   - component: {fileID: 222502529490690514}
   - component: {fileID: 114294410619315144}
   - component: {fileID: 114081835540260104}
-  - component: {fileID: 114954458608286408}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -593,19 +578,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114954458608286408
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1219465846299514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1012ad8573493f64faa1d5568883e859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SoundName: 
 --- !u!1 &1261030487096646
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,7 +1024,6 @@ GameObject:
   - component: {fileID: 222064165230263986}
   - component: {fileID: 114005780390815292}
   - component: {fileID: 114916717667247264}
-  - component: {fileID: 114985856664380818}
   m_Layer: 5
   m_Name: ResumeButton
   m_TagString: Untagged
@@ -1174,19 +1145,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114985856664380818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1389201559671664}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1012ad8573493f64faa1d5568883e859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SoundName: 
 --- !u!1 &1481746587088898
 GameObject:
   m_ObjectHideFlags: 0
@@ -1302,7 +1260,6 @@ GameObject:
   - component: {fileID: 222102234378306708}
   - component: {fileID: 114809501700533796}
   - component: {fileID: 114669130523249078}
-  - component: {fileID: 114369200730934218}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -1424,19 +1381,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114369200730934218
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579546905970758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1012ad8573493f64faa1d5568883e859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SoundName: 
 --- !u!1 &1660661531042906
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,7 +1630,6 @@ GameObject:
   - component: {fileID: 222031621489819996}
   - component: {fileID: 114840066452874532}
   - component: {fileID: 114706958596038606}
-  - component: {fileID: 114101811516874134}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -1808,19 +1751,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114101811516874134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1883539947200050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1012ad8573493f64faa1d5568883e859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SoundName: 
 --- !u!1 &1992196958253222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1838,7 +1768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &224363020394662892
 RectTransform:
   m_ObjectHideFlags: 0

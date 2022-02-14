@@ -62,3 +62,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Personal testing scene
+/[Aa]ssets/Scenes/test_scene.unity
+/[Aa]ssets/Scenes/test_scene.unity.meta

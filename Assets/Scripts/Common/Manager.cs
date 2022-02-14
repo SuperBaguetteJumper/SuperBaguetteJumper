@@ -1,18 +1,17 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Manager<T> : SingletonGameStateObserver<T> where T:Component{
+namespace Common {
+	public abstract class Manager<T> : SingletonGameStateObserver<T> where T : Component {
+		public bool IsReady { get; private set; }
 
-	protected bool m_IsReady = false;
-	public bool IsReady { get { return m_IsReady; } }
+		// Use this for initialization
+		protected virtual IEnumerator Start() {
+			IsReady = false;
+			yield return this.StartCoroutine(this.InitCoroutine());
+			IsReady = true;
+		}
 
-	protected abstract IEnumerator InitCoroutine();
-
-	// Use this for initialization
-	protected virtual IEnumerator Start () {
-		m_IsReady = false;
-		yield return StartCoroutine(InitCoroutine());
-		m_IsReady = true;
+		protected abstract IEnumerator InitCoroutine();
 	}
 }

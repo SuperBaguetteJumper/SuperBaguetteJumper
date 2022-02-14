@@ -1,111 +1,68 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class CustomTimer : MonoBehaviour {
+namespace Common {
+	public class CustomTimer : MonoBehaviour {
+		private static Dictionary<string, CustomTimer> dicoCustomTimers;
 
-	//static
-	static Dictionary<string, CustomTimer> dicoCustomTimers;
-	public static CustomTimer GetCustomTimer(string name)
-	{
-		CustomTimer customTimer = null;
-		dicoCustomTimers.TryGetValue(name, out customTimer);
-		return customTimer;
-	}
-	//
+		public bool IsRunning { get; private set; }
 
-	public bool IsRunning{get;private set;}
+		public float TimeScale { get; set; }
 
-	float m_Time=0;
+		public float DeltaTime => this.IsRunning ? UnityEngine.Time.deltaTime * this.TimeScale : 0;
 
-	private float m_TimeScale;
+		public float FixedDeltaTime => this.IsRunning ? UnityEngine.Time.fixedDeltaTime * this.TimeScale : 0;
 
-	public float TimeScale 
-	{
-		get{
-			return m_TimeScale;
-		}
-		set{
-			m_TimeScale = value;
-		}
-	}
-	public float DeltaTime
-	{
-		get{
+		public float Time { get; private set; }
 
-			return IsRunning ? UnityEngine.Time.deltaTime* m_TimeScale : 0;
-		}
-	}
-
-	public float FixedDeltaTime
-	{
-		get{
-			
-			return IsRunning ? UnityEngine.Time.fixedDeltaTime* m_TimeScale : 0;
-		}
-	}
-
-
-	public float Time
-	{
-		get{
-			return m_Time;
-		}
-		private set{
-			m_Time = value;
-		}
-	}
-
-	public void StopTimer()
-	{
-		IsRunning = false;
-	}
-
-	public void StartTimer()
-	{
-		IsRunning = true;
-	}
-
-	public void Reset()
-	{
-		Time = 0;
-	}
-
-	public void Reset(bool startTimer)
-	{
-		Time = 0;
-		IsRunning = startTimer;
-	}
-
-	public void ResetAndStart()
-	{
-		Reset (true);
-	}
-
-	public void ResetAndStop()
-	{
-		Reset (false);
-	}
-
-	private void Awake()
-	{
-		if(dicoCustomTimers==null)
-		{
-			dicoCustomTimers = new Dictionary<string, CustomTimer>();
-			CustomTimer[] customTimers = GameObject.FindObjectsOfType<CustomTimer>();
-			foreach (var item in customTimers)
-			{
-				dicoCustomTimers.Add(item.name, item);
+		private void Awake() {
+			if (dicoCustomTimers == null) {
+				dicoCustomTimers = new Dictionary<string, CustomTimer>();
+				CustomTimer[] customTimers = FindObjectsOfType<CustomTimer>();
+				foreach (CustomTimer item in customTimers)
+					dicoCustomTimers.Add(item.name, item);
 			}
 		}
-	}
-	// Use this for initialization
-	void Start () {
-		Reset(false);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		Time+=DeltaTime;
+
+		public void Reset() {
+			this.Time = 0;
+		}
+
+		public void Reset(bool startTimer) {
+			this.Time = 0;
+			this.IsRunning = startTimer;
+		}
+
+		// Use this for initialization
+		private void Start() {
+			this.Reset(false);
+		}
+
+		// Update is called once per frame
+		private void Update() {
+			this.Time += this.DeltaTime;
+		}
+
+		public static CustomTimer GetCustomTimer(string name) {
+			CustomTimer customTimer;
+			dicoCustomTimers.TryGetValue(name, out customTimer);
+			return customTimer;
+		}
+
+		public void StopTimer() {
+			this.IsRunning = false;
+		}
+
+		public void StartTimer() {
+			this.IsRunning = true;
+		}
+
+		public void ResetAndStart() {
+			this.Reset(true);
+		}
+
+		public void ResetAndStop() {
+			this.Reset(false);
+		}
 	}
 }
