@@ -124,8 +124,17 @@ namespace Common {
 			public override bool Equals(object obj) {
 				if (!(obj is Cylindrical))
 					return false;
-				Cylindrical cylObj = (Cylindrical) obj;
-				return cylObj.rho == this.rho && cylObj.theta == this.theta && cylObj.z == this.z;
+				Cylindrical other = (Cylindrical) obj;
+				return this.rho.Equals(other.rho) && this.theta.Equals(other.theta) && this.z.Equals(other.z);
+			}
+
+			public override int GetHashCode() {
+				unchecked {
+					int hashCode = this.rho.GetHashCode();
+					hashCode = (hashCode * 397) ^ this.theta.GetHashCode();
+					hashCode = (hashCode * 397) ^ this.z.GetHashCode();
+					return hashCode;
+				}
 			}
 		}
 
@@ -168,8 +177,17 @@ namespace Common {
 			public override bool Equals(object obj) {
 				if (!(obj is Spherical))
 					return false;
-				Spherical sphObj = (Spherical) obj;
-				return sphObj.rho == this.rho && sphObj.theta == this.theta && sphObj.phi == this.phi;
+				Spherical other = (Spherical) obj;
+				return this.rho.Equals(other.rho) && this.theta.Equals(other.theta) && this.phi.Equals(other.phi);
+			}
+
+			public override int GetHashCode() {
+				unchecked {
+					int hashCode = this.rho.GetHashCode();
+					hashCode = (hashCode * 397) ^ this.theta.GetHashCode();
+					hashCode = (hashCode * 397) ^ this.phi.GetHashCode();
+					return hashCode;
+				}
 			}
 		}
 
