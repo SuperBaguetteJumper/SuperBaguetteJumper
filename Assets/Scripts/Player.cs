@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TestPlayer : MonoBehaviour {
+public class Player : MonoBehaviour {
 	[SerializeField]
 	private GameObject cameraContainer;
 
@@ -8,7 +8,7 @@ public class TestPlayer : MonoBehaviour {
 	private Quaternion spawnRot;
 
 	public bool OnGround {
-		get => Physics.Raycast(this.rigidbody.position + 0.249f * Vector3.down, Vector3.down, out _, 0.002f);
+		get => Physics.SphereCast(this.rigidbody.position + 0.001f * Vector3.up, 0.25f, Vector3.down, out _, 0.002f);
 	}
 
 	private new Rigidbody rigidbody;
@@ -28,7 +28,7 @@ public class TestPlayer : MonoBehaviour {
 		float mouseXInput = Input.GetAxisRaw("Mouse X");
 		float mouseYInput = Input.GetAxisRaw("Mouse Y");
 		Vector3 moveVect = (onGround ? 1 : 0.7f) * Time.fixedDeltaTime * 1.5f * Vector3.ProjectOnPlane(vInput * this.transform.forward + hInput * this.transform.right, Vector3.up).normalized;
-		Quaternion qRot = Quaternion.AngleAxis(Time.fixedDeltaTime * 250 * mouseXInput, this.transform.up);
+		Quaternion qRot = Quaternion.AngleAxis(Time.fixedDeltaTime * 900 * mouseXInput, this.transform.up);
 		Quaternion qRotUpright = Quaternion.FromToRotation(this.transform.up, Vector3.up);
 		Quaternion qOrientSlightlyUpright = Quaternion.Slerp(this.transform.rotation, qRotUpright * this.transform.rotation, 4 * Time.fixedDeltaTime);
 		this.rigidbody.MovePosition(this.transform.position + moveVect);
@@ -36,15 +36,25 @@ public class TestPlayer : MonoBehaviour {
 		this.rigidbody.angularVelocity = Vector3.zero;
 
 		Transform cTrans = this.cameraContainer.transform;
-		cTrans.RotateAround(cTrans.position, cTrans.right, -Time.fixedDeltaTime * 200 * mouseYInput);
+		float rot = cTrans.localEulerAngles.x - Time.fixedDeltaTime * 450 * mouseYInput;
+		if (rot < 0) rot += 360;
+		if (rot > 360) rot -= 360;
+		if (rot > 90 && rot < 180) rot = 90;
+		if (rot < 270 && rot >= 180) rot = 270;
+		cTrans.localEulerAngles = new Vector3(rot, cTrans.localEulerAngles.y, cTrans.localEulerAngles.z);
 
-		Debug.DrawRay(this.rigidbody.position + 0.249f * Vector3.down, Vector3.down * 0.002f, Color.blue);
-		if (Input.GetButton("Jump") && onGround)
-			this.rigidbody.AddForce(0, 5, 0, ForceMode.Impulse);
+		if (onGround && Input.GetButton("Jump"))
+			this.rigidbody.AddForce(this.transform.up * 5, ForceMode.Impulse);
+
+		if (this.rigidbody.velocity.y < 0 && !onGround)
+			this.rigidbody.velocity += Vector3.up * (Physics.gravity.y * 1.25f * Time.fixedDeltaTime);
+		else if (this.rigidbody.velocity.y > 0 && !Input.GetButton("Jump"))
+			this.rigidbody.velocity += Vector3.up * (Physics.gravity.y * 0.75f * Time.fixedDeltaTime);
 
 		if (this.rigidbody.position.y < -10) {
 			this.rigidbody.MovePosition(this.spawnPos);
 			this.rigidbody.MoveRotation(this.spawnRot);
+			this.rigidbody.velocity = Vector3.zero;
 		}
 	}
 }
