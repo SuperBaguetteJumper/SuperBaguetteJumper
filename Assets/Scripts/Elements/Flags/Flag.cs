@@ -8,6 +8,18 @@ namespace Elements.Flags {
 		[SerializeField] private AnimationCurve curve;
 		[SerializeField] private GameObject animatedObject;
 
+		private float FlagRaise {
+			set {
+				Vector3 position = this.animatedObject.transform.localPosition;
+				position.y = value;
+				this.animatedObject.transform.localPosition = position;
+			}
+		}
+
+		private void Awake() {
+			this.FlagRaise = this.raised ? 1 : 0;
+		}
+
 		private void OnTriggerEnter(Collider other) {
 			this.OnReach();
 			if (!this.raised) {
@@ -21,9 +33,7 @@ namespace Elements.Flags {
 			float duration;
 			while ((duration = Time.time - start) < this.raiseLength) {
 				float progress = duration / this.raiseLength;
-				Vector3 position = this.animatedObject.transform.localPosition;
-				position.y = this.curve.Evaluate(progress);
-				this.animatedObject.transform.localPosition = position;
+				this.FlagRaise = this.curve.Evaluate(progress);
 				yield return null;
 			}
 		}

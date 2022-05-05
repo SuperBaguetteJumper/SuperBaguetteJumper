@@ -66,11 +66,13 @@ public class Player : MonoBehaviour {
 		Cursor.visible = false;
 		EventManager.Instance.AddListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
 		EventManager.Instance.AddListener<SnailObjectPickedUpEvent>(this.OnSnailObjectPickedUp);
+		EventManager.Instance.AddListener<CheeseObjectPickedUpEvent>(this.OnCheeseObjectPickedUp);
 	}
 
 	protected virtual void OnDestroy() {
 		EventManager.Instance.RemoveListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
 		EventManager.Instance.RemoveListener<SnailObjectPickedUpEvent>(this.OnSnailObjectPickedUp);
+		EventManager.Instance.RemoveListener<CheeseObjectPickedUpEvent>(this.OnCheeseObjectPickedUp);
 	}
 
 	private void FixedUpdate() {
@@ -157,5 +159,15 @@ public class Player : MonoBehaviour {
 		this.SpeedModifier -= snail.Strengh;
 		yield return new WaitForSeconds(snail.Duration);
 		this.SpeedModifier += snail.Strengh;
+	}
+
+	private void OnCheeseObjectPickedUp(CheeseObjectPickedUpEvent e) {
+		this.StartCoroutine(this.CheeseEffect(e.Object));
+	}
+
+	private IEnumerator CheeseEffect(CheeseObject cheese) {
+		this.SpeedModifier += cheese.Strengh;
+		yield return new WaitForSeconds(cheese.Duration);
+		this.SpeedModifier -= cheese.Strengh;
 	}
 }
