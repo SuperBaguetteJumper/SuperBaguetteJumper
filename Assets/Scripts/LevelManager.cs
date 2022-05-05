@@ -10,7 +10,7 @@ public class LevelManager : Manager<LevelManager> {
 
 	#endregion
 
-	protected override void GamePlay(GamePlayEvent e) {}
+	protected override void OnGamePlay(GamePlayEvent e) {}
 
-	protected override void GameMenu(GameMenuEvent e) {}
+	protected override void OnGameMenu(GameMenuEvent e) {}
 }

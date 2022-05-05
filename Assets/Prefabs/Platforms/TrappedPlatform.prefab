@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1875536829}
   - component: {fileID: 4665276073233804958}
+  - component: {fileID: 3778527850437908136}
   m_Layer: 0
   m_Name: Spikes
   m_TagString: Untagged
@@ -48,6 +49,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.75, y: 0.7, z: 0.75}
   m_Center: {x: 0, y: 0.45, z: 0}
+--- !u!114 &3778527850437908136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875536828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 417174d2fd344c2c9c34fedb0b906d2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6189069395702017096
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -222,12 +235,59 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d482eb206d9f354ead62e833557f297, type: 3}
+--- !u!1 &8649628204502545075 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3308556747968792818, guid: 8d482eb206d9f354ead62e833557f297,
+    type: 3}
+  m_PrefabInstance: {fileID: 6189069395775732289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8649628204502545074 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3308556747968792819, guid: 8d482eb206d9f354ead62e833557f297,
     type: 3}
   m_PrefabInstance: {fileID: 6189069395775732289}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6430745466208523227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649628204502545075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82b654611baf45cb8bb86812fd3e4715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialDelay: 0
+  transitionInLength: 0.5
+  transitionOutLength: 0.5
+  safeLength: 3
+  dangerLength: 5
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &6189069396212525946
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 6820279533841992181, guid: e3227916ae2feea4599ebe5128bc6ddb,
         type: 3}
       propertyPath: m_Name
-      value: SnailObject
+      value: SnailObject Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6820279533841992182, guid: e3227916ae2feea4599ebe5128bc6ddb,
         type: 3}
@@ -89,3 +89,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsCollectible: 1
   model: {fileID: 60387787655519536, guid: b26d68b6d23f3b741ab8c9005585dc3e, type: 3}
+  <Strengh>k__BackingField: 0.4
+  <Duration>k__BackingField: 5

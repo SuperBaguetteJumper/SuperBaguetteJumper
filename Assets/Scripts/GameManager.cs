@@ -35,7 +35,7 @@ public class GameManager : Manager<GameManager> {
 
 	// Game initialization
 	private void InitNewGame(bool raiseStatsEvent = true) {
-		this.SetScore(0);
+		this.SetScore(0, raiseStatsEvent);
 	}
 
 	#endregion

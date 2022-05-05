@@ -88,23 +88,23 @@ public class MenuManager : Manager<MenuManager> {
 
 	#region Callbacks to GameManager events
 
-	protected override void GameMenu(GameMenuEvent e) {
+	protected override void OnGameMenu(GameMenuEvent e) {
 		this.OpenPanel(this.panelMainMenu);
 	}
 
-	protected override void GamePlay(GamePlayEvent e) {
+	protected override void OnGamePlay(GamePlayEvent e) {
 		this.OpenPanel(null);
 	}
 
-	protected override void GamePause(GamePauseEvent e) {
+	protected override void OnGamePause(GamePauseEvent e) {
 		this.OpenPanel(this.panelInGameMenu);
 	}
 
-	protected override void GameResume(GameResumeEvent e) {
+	protected override void OnGameResume(GameResumeEvent e) {
 		this.OpenPanel(null);
 	}
 
-	protected override void GameOver(GameOverEvent e) {
+	protected override void OnGameOver(GameOverEvent e) {
 		this.OpenPanel(this.panelGameOver);
 	}
 

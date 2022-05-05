@@ -23,7 +23,7 @@ public class CameraController : SimpleGameStateObserver {
 		this.cameraTransform.position = this.initPosition;
 	}
 
-	protected override void GameMenu(GameMenuEvent e) {
+	protected override void OnGameMenu(GameMenuEvent e) {
 		this.ResetCamera();
 	}
 }

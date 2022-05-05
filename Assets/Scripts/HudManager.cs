@@ -12,7 +12,7 @@ public class HudManager : Manager<HudManager> {
 
 	#region Callbacks to GameManager events
 
-	protected override void GameStatisticsChanged(GameStatisticsChangedEvent e) {
+	protected override void OnGameStatisticsChanged(GameStatisticsChangedEvent e) {
 		// TODO
 	}
 
