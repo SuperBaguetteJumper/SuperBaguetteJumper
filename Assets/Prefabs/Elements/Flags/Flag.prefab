@@ -547,9 +547,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8178360488362582729}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a55e090fcb4fd79d499d828c11b4d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d75d6a7ea0d458295930d5c32562aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   raised: 0
   raiseLength: 1
   curve:

@@ -15,8 +15,6 @@ public class Player : MonoBehaviour {
 	[SerializeField] private float instaJumpModifier = 0.75f;
 	[SerializeField] private float yRecoveryStrengh = 10;
 
-	private Vector3 spawnPos;
-	private Quaternion spawnRot;
 	private float spawnCam;
 
 	private Vector3 center {
@@ -38,18 +36,19 @@ public class Player : MonoBehaviour {
 	public float SpeedModifier { get; private set; }
 	public float JumpModifier { get; private set; }
 
-	private new Rigidbody rigidbody;
-	private new CapsuleCollider collider;
+	public new Rigidbody rigidbody { get; private set; }
+	public new CapsuleCollider collider { get; private set; }
+
+	private static readonly float ROTATION_EPSILON = 0.001f;
 
 	private void Die() {
-		EventManager.Instance.Raise(new PlayerDiedEvent());
-		// TODO move in level manager
-		this.transform.position = this.spawnPos;
-		this.transform.rotation = this.spawnRot;
-		this.rigidbody.velocity = Vector3.zero;
+		EventManager.Instance.Raise(new PlayerDiedEvent(this));
+	}
+
+	public void ResetCamera() {
 		Vector3 eulerAngles = this.cameraContainer.localEulerAngles;
-		eulerAngles.x = this.spawnCam;
-		this.cameraContainer.localEulerAngles = eulerAngles;
+        eulerAngles.x = this.spawnCam;
+        this.cameraContainer.localEulerAngles = eulerAngles;
 	}
 
 	private void Awake() {
@@ -57,9 +56,6 @@ public class Player : MonoBehaviour {
 		this.collider = this.GetComponent<CapsuleCollider>();
 		this.SpeedModifier = 1;
 		this.JumpModifier = 1;
-		// TODO use level manager instead
-		this.spawnPos = this.rigidbody.position;
-		this.spawnRot = this.rigidbody.rotation;
 		this.spawnCam = this.cameraContainer.localEulerAngles.x;
 		// TODO move in game manager
 		Cursor.lockState = CursorLockMode.Locked;
@@ -97,7 +93,7 @@ public class Player : MonoBehaviour {
 		// Calculate move & rotation
 		Vector3 moveVect = moveModifier * Time.fixedDeltaTime * this.moveSpeed * Vector3.ProjectOnPlane(vInput * this.transform.forward + hInput * this.transform.right, Vector3.up).normalized;
 		float yRot = Time.fixedDeltaTime * this.rotationSpeed * 90 * mouseXInput;
-		if (yRot < 0.001f && yRot > -0.001f)
+		if (yRot < ROTATION_EPSILON && yRot > -ROTATION_EPSILON)
 			yRot = 0;
 		Quaternion qRot = Quaternion.AngleAxis(yRot, this.transform.up);
 		Quaternion qRotUpright = Quaternion.FromToRotation(this.transform.up, Vector3.up);
@@ -111,7 +107,7 @@ public class Player : MonoBehaviour {
 		// Rotate camera (up / down)
 		Vector3 angle = this.cameraContainer.localEulerAngles;
 		float xRot = Time.fixedDeltaTime * this.rotationSpeed * 90 * mouseYInput;
-		if (xRot < 0.001f && xRot > -0.001f)
+		if (xRot < ROTATION_EPSILON && xRot > -ROTATION_EPSILON)
 			xRot = 0;
 		float rot = angle.x - xRot;
 		if (rot < 0 || rot > 360) rot %= 360;
