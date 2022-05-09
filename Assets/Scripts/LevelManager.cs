@@ -21,12 +21,14 @@ public class LevelManager : MonoBehaviour {
 		EventManager.Instance.AddListener<CheckpointReachedEvent>(this.OnCheckpointReached);
 		EventManager.Instance.AddListener<EndReachedEvent>(this.OnEndReached);
 		EventManager.Instance.AddListener<PlayerDiedEvent>(this.OnPlayerDied);
+		EventManager.Instance.AddListener<CoinObjectPickedUpEvent>(this.OnCoinObjectPickedUp);
 	}
 
 	private void OnDestroy() {
 		EventManager.Instance.RemoveListener<CheckpointReachedEvent>(this.OnCheckpointReached);
 		EventManager.Instance.RemoveListener<EndReachedEvent>(this.OnEndReached);
 		EventManager.Instance.RemoveListener<PlayerDiedEvent>(this.OnPlayerDied);
+		EventManager.Instance.RemoveListener<CoinObjectPickedUpEvent>(this.OnCoinObjectPickedUp);
 	}
 
 	private void OnCheckpointReached(CheckpointReachedEvent e) {
@@ -49,5 +51,9 @@ public class LevelManager : MonoBehaviour {
 	    e.Player.transform.rotation = respawnPoint.rotation * Quaternion.LookRotation(Vector3.right);
 	    e.Player.rigidbody.velocity = Vector3.zero;
 	    e.Player.ResetCamera();
+	}
+
+	private void OnCoinObjectPickedUp(CoinObjectPickedUpEvent e) {
+		Debug.Log("+" + e.Object.Value + " money");
 	}
 }

@@ -113,6 +113,10 @@ public class WineBottleObjectPickedUpEvent : ObjectPickedUpEvent<WineBottleObjec
 public class OldCarObjectPickedUpEvent : ObjectPickedUpEvent<OldCarObject> {
 	public OldCarObjectPickedUpEvent(OldCarObject obj) : base(obj) {}
 }
+/// <summary>Coin (money) object has been picked up</summary>
+public class CoinObjectPickedUpEvent : ObjectPickedUpEvent<CoinObject> {
+	public CoinObjectPickedUpEvent(CoinObject obj) : base(obj) {}
+}
 
 #endregion
 
