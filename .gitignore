@@ -65,3 +65,7 @@ crashlytics-build.properties
 # Personal testing scene
 /[Aa]ssets/Scenes/test_scene.unity
 /[Aa]ssets/Scenes/test_scene.unity.meta
+
+# Mac Files
+**/.DS_Store
+
