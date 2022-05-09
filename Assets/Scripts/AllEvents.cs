@@ -1,4 +1,6 @@
-﻿using Events;using Objects;
+﻿using Elements.Flags;
+using Events;
+using Objects;
 
 #region GameManager Events
 
@@ -41,18 +43,39 @@ public class QuitButtonClickedEvent : Event {}
 #region Level Events
 
 /// <summary>Checkpoint has been reached in a level</summary>
-public class CheckpointReachedEvent: Event {}
+public class CheckpointReachedEvent : Event {
+	public Flag Flag { get; }
+
+	public CheckpointReachedEvent(Flag flag) {
+		this.Flag = flag;
+	}
+}
+/// <summary>Level end has been reached</summary>
+public class EndReachedEvent: Event {}
 
 #endregion
 
 #region Player Events
 
+public class PlayerEvent : Event {
+	public Player Player { get; }
+
+	public PlayerEvent(Player player) {
+		this.Player = player;
+	}
+}
 /// <summary>Player spawned in the level</summary>
-public class PlayerSpawnEvent : Event {}
+public class PlayerSpawnEvent : PlayerEvent {
+	public PlayerSpawnEvent(Player player) : base(player) {}
+}
 /// <summary>Player died in the level</summary>
-public class PlayerDiedEvent : Event {}
+public class PlayerDiedEvent : PlayerEvent {
+	public PlayerDiedEvent(Player player) : base(player) {}
+}
 /// <summary>Player got trapped in the level</summary>
-public class PlayerTrappedEvent : Event {}
+public class PlayerTrappedEvent : PlayerEvent {
+	public PlayerTrappedEvent(Player player) : base(player) {}
+}
 
 #endregion
 

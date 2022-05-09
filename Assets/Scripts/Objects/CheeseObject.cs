@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Objects {
 	public class CheeseObject : PhysicalObject {
+		[field: Header("Cheese Object")]
 		[field: SerializeField] public float Strengh { get; private set; } = 0.4f;
 		[field: SerializeField] public float Duration { get; private set; } = 5;
 
