@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Objects {
 	[ExecuteInEditMode]
 	public abstract class PhysicalObject : MonoBehaviour {
-		[Header("PhysicalObject")]
+		[Header("Physical Object")]
 		[SerializeField] private bool IsCollectible;
 		[SerializeField] private GameObject model;
 		[SerializeField] private float scale = 0.4f;

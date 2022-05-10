@@ -1,8 +1,10 @@
 using System.Collections;
+using Events;
 using UnityEngine;
 
 namespace Elements.Flags {
-	public abstract class Flag : MonoBehaviour {
+	public class Flag : MonoBehaviour {
+		[SerializeField] private FlagType type = FlagType.None;
 		[SerializeField] private bool raised;
 		[SerializeField] private float raiseLength;
 		[SerializeField] private AnimationCurve curve;
@@ -21,7 +23,17 @@ namespace Elements.Flags {
 		}
 
 		private void OnTriggerEnter(Collider other) {
-			this.OnReach();
+			Player player = other.gameObject.GetComponent<Player>();
+			if (player == null)
+				return;
+			switch (this.type) {
+			case FlagType.Checkpoint:
+				EventManager.Instance.Raise(new CheckpointReachedEvent(this));
+				break;
+			case FlagType.End:
+				EventManager.Instance.Raise(new EndReachedEvent());
+				break;
+			}
 			if (!this.raised) {
 				this.raised = true;
 				this.StartCoroutine(this.Raise());
@@ -37,7 +49,9 @@ namespace Elements.Flags {
 				yield return null;
 			}
 		}
+	}
 
-		protected abstract void OnReach();
+	public enum FlagType {
+		None, Start, Checkpoint, End
 	}
 }
