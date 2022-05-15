@@ -89,5 +89,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsCollectible: 1
   model: {fileID: 60387787655519536, guid: b26d68b6d23f3b741ab8c9005585dc3e, type: 3}
+  color: {r: 0.6862745, g: 0, b: 0, a: 0}
+  scale: 0.4
+  offset: 0.3
   <Strengh>k__BackingField: 0.4
   <Duration>k__BackingField: 5

@@ -31,7 +31,7 @@ namespace Elements.Flags {
 				EventManager.Instance.Raise(new CheckpointReachedEvent(this));
 				break;
 			case FlagType.End:
-				EventManager.Instance.Raise(new EndReachedEvent());
+				EventManager.Instance.Raise(new EndReachedEvent(this));
 				break;
 			}
 			if (!this.raised) {

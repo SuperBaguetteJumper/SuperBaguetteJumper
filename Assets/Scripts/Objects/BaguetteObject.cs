@@ -1,9 +1,9 @@
 using Events;
 
 namespace Objects {
-	public class WineBottleObject : EffectObject {
+	public class BaguetteObject : PhysicalObject {
 		protected override bool OnCollect() {
-			WineBottleObjectPickedUpEvent e = new WineBottleObjectPickedUpEvent(this);
+			BaguetteObjectPickedUpEvent e = new BaguetteObjectPickedUpEvent(this);
 			EventManager.Instance.Raise(e);
 			return e.CanPickup;
 		}

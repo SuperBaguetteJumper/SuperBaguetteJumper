@@ -1,6 +1,7 @@
 ﻿using Elements.Flags;
-using Events;
 using Objects;
+using UnityEngine;
+using Event = Events.Event;
 
 #region GameManager Events
 
@@ -42,51 +43,64 @@ public class QuitButtonClickedEvent : Event {}
 
 #region Level Events
 
-/// <summary>Checkpoint has been reached in a level</summary>
-public class CheckpointReachedEvent : Event {
+/// <summary>A flag has been reached in a level</summary>
+public abstract class FlagReachedEvent : Event {
 	public Flag Flag { get; }
 
-	public CheckpointReachedEvent(Flag flag) {
+	public FlagReachedEvent(Flag flag) {
 		this.Flag = flag;
 	}
 }
+/// <summary>Checkpoint has been reached in a level</summary>
+public class CheckpointReachedEvent : FlagReachedEvent {
+	public CheckpointReachedEvent(Flag flag) : base(flag) {}
+}
 /// <summary>Level end has been reached</summary>
-public class EndReachedEvent: Event {}
+public class EndReachedEvent : FlagReachedEvent {
+	public EndReachedEvent(Flag flag) : base(flag) {}
+}
+/// <summary>Level has been started</summary>
+public class LevelStartedEvent : Event {}
+/// <summary>Level has been lost</summary>
+public class LevelLostEvent : Event {}
+/// <summary>Level has been won</summary>
+public class LevelWonEvent : Event {
+	public int Coins { get; }
+
+	public LevelWonEvent(int coins) {
+		this.Coins = coins;
+	}
+}
 
 #endregion
 
 #region Player Events
 
-public class PlayerEvent : Event {
-	public Player Player { get; }
+/// <summary>Player spawned in the level</summary>
+public class PlayerSpawnedEvent : Event {
+	public Transform RespawnPoint { get; }
 
-	public PlayerEvent(Player player) {
-		this.Player = player;
+	public PlayerSpawnedEvent(Transform respawnPoint) {
+		this.RespawnPoint = respawnPoint;
 	}
 }
-/// <summary>Player spawned in the level</summary>
-public class PlayerSpawnEvent : PlayerEvent {
-	public PlayerSpawnEvent(Player player) : base(player) {}
-}
 /// <summary>Player died in the level</summary>
-public class PlayerDiedEvent : PlayerEvent {
-	public PlayerDiedEvent(Player player) : base(player) {}
-}
+public class PlayerDiedEvent : Event {}
 /// <summary>Player got trapped in the level</summary>
-public class PlayerTrappedEvent : PlayerEvent {
-	public PlayerTrappedEvent(Player player) : base(player) {}
-}
+public class PlayerTrappedEvent : Event {}
 
 #endregion
 
 #region Objets Events
 
 /// <summary>Physical Object has been picked up</summary>
-public class ObjectPickedUpEvent<T> : Event where T : PhysicalObject {
+public abstract class ObjectPickedUpEvent<T> : Event where T : PhysicalObject {
 	public T Object { get; }
+	public bool CanPickup { get; set; }
 
 	public ObjectPickedUpEvent(T obj) {
 		this.Object = obj;
+		this.CanPickup = obj.IsCollectible;
 	}
 }
 /// <summary>Cheese (speedness) object has been picked up</summary>
@@ -116,6 +130,10 @@ public class OldCarObjectPickedUpEvent : ObjectPickedUpEvent<OldCarObject> {
 /// <summary>Coin (money) object has been picked up</summary>
 public class CoinObjectPickedUpEvent : ObjectPickedUpEvent<CoinObject> {
 	public CoinObjectPickedUpEvent(CoinObject obj) : base(obj) {}
+}
+/// <summary>Baguette (extra life) object has been picked up</summary>
+public class BaguetteObjectPickedUpEvent : ObjectPickedUpEvent<BaguetteObject> {
+	public BaguetteObjectPickedUpEvent(BaguetteObject obj) : base(obj) {}
 }
 
 #endregion

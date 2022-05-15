@@ -7,8 +7,10 @@ namespace Objects {
 		[field: SerializeField]
 		public int Value { get; private set; } = 1;
 
-		protected override void OnCollect() {
-			EventManager.Instance.Raise(new CoinObjectPickedUpEvent(this));
+		protected override bool OnCollect() {
+			CoinObjectPickedUpEvent e = new CoinObjectPickedUpEvent(this);
+			EventManager.Instance.Raise(e);
+			return e.CanPickup;
 		}
 	}
 }

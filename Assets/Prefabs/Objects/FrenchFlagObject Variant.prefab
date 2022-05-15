@@ -97,7 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3a8ff6b736e475e93d22cf03e7f9e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCollectible: 0
+  <IsCollectible>k__BackingField: 1
+  <ReactivateOnRespawn>k__BackingField: 0
   model: {fileID: 8819624952165000938, guid: 5079f9f234e9ebd4cbbe2b7257520a99, type: 3}
   scale: 0.3
   offset: 0.15

@@ -5,7 +5,8 @@ namespace Platforms {
 		public bool IsActivated { get; private set; }
 
 		private void OnTriggerEnter(Collider other) {
-			this.IsActivated = true;
+			if (other.gameObject.GetComponent<Player>() != null)
+				this.IsActivated = true;
 		}
 
 		public void Desactivate() {

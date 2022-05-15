@@ -3,8 +3,9 @@ using UnityEngine;
 namespace Objects {
 	[ExecuteInEditMode]
 	public abstract class PhysicalObject : MonoBehaviour {
-		[Header("Physical Object")]
-		[SerializeField] private bool IsCollectible;
+		[field: Header("Physical Object")]
+		[field: SerializeField] public bool IsCollectible { get; private set; } = true;
+		[field: SerializeField] public bool ReactivateOnRespawn { get; private set; } = true;
 		[SerializeField] private GameObject model;
 		[SerializeField] private float scale = 0.4f;
 		[SerializeField] private float offset = 0.3f;
@@ -33,9 +34,8 @@ namespace Objects {
 		private void OnTriggerEnter(Collider other) {
 			if (!Application.isPlaying)
 				return;
-			this.OnCollect();
-			if (this.IsCollectible)
-				Destroy(this.gameObject);
+			if (this.OnCollect() && this.IsCollectible)
+				this.gameObject.SetActive(false);
 		}
 
 		private void OnDestroy() {
@@ -49,6 +49,6 @@ namespace Objects {
 			this.hasNoActiveInstance = true;
 		}
 
-		protected abstract void OnCollect();
+		protected abstract bool OnCollect();
 	}
 }
