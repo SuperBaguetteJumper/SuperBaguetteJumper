@@ -10,6 +10,7 @@ namespace Elements {
 		[SerializeField] public Lambert93 realWorld;
 
 		private Terrain terrain;
+		public bool HasGenerated { get; private set; }
 
 		private void Awake() {
 			this.terrain = this.gameObject.GetComponent<Terrain>();
@@ -17,6 +18,7 @@ namespace Elements {
 
 		private IEnumerator Start() {
 			// Prepare terrain
+			this.terrain.enabled = false;
 			this.terrain.terrainData.heightmapResolution = this.manager.Size * this.manager.Resolution + 1;
 			this.terrain.terrainData.size = new Vector3(this.manager.Size + 1, this.manager.Height, this.manager.Size + 1);
 
@@ -28,6 +30,7 @@ namespace Elements {
 			MNSRequest mnsRequest = GeoDataUtils.MNSRequest(size, bbox);
 			yield return mnsRequest.Execute();
 			if (mnsRequest.HasError) {
+				Debug.LogWarning($"Terrain tile {this.manager.TileID(this.x, this.z)} failed to load alti on area");
 				Destroy(this.gameObject);
 				yield break;
 			}
@@ -40,6 +43,7 @@ namespace Elements {
 			UnityWebRequest textureRequest = GeoDataUtils.OrthoRequest(size, bbox);
 			yield return textureRequest.SendWebRequest();
 			if (textureRequest.result != UnityWebRequest.Result.Success) {
+				Debug.LogWarning($"Terrain tile {this.manager.TileID(this.x, this.z)} failed to load ortho on area");
 				Destroy(this.gameObject);
 				yield break;
 			}
@@ -52,6 +56,8 @@ namespace Elements {
 			// Apply to terrain
 			this.terrain.terrainData.SetHeights(0, 0, mnsRequest.MNS);
 			this.terrain.materialTemplate = material;
+			this.terrain.enabled = true;
+			this.HasGenerated = true;
 
 			// Connect tile to others
 			Terrain left = this.GetNeighborIfNull(this.terrain.leftNeighbor, this.x - 1, this.z);

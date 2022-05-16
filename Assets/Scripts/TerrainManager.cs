@@ -10,6 +10,7 @@ public class TerrainManager : MonoBehaviour {
 	[SerializeField] private Lambert93 coords; // Example: new Lambert93(652285.51, 100, 6861635.77)
 	[SerializeField] private int minMaxEvaluationScale = 5;
 	[SerializeField] private int minMaxEvaluationSampling = 16;
+	[SerializeField] private int maxConcurrentGenerations = 4;
 
 	public float MinHeight { get; private set; }
 	public float MaxHeight { get; private set; }
@@ -18,15 +19,28 @@ public class TerrainManager : MonoBehaviour {
 	}
 
 	public Dictionary<string, TerrainTile> Tiles { get; private set; } = new Dictionary<string, TerrainTile>();
+	private Queue<(int x, int z)> generationQueue = new Queue<(int x, int z)>();
 
 	private IEnumerator Start() {
 		yield return this.ComputeMinMax();
-		for (int i = -2; i < 2; i++)
-			for (int j = -2; j < 2; j++)
-				this.AddTile(i, j);
+		int size = 5;
+		for (int i = -size; i < size; i++)
+			for (int j = -size; j < size; j++)
+				this.generationQueue.Enqueue((i, j));
+		for (int i = 0; i < this.maxConcurrentGenerations; i++)
+			this.StartCoroutine(this.TilesGenerationFromQueue());
 	}
 
-	private void AddTile(int x, int z) {
+	private IEnumerator TilesGenerationFromQueue() {
+		while (this.enabled) {
+			yield return new WaitWhile(() => this.generationQueue.Count == 0);
+			(int x, int z) = this.generationQueue.Dequeue();
+			TerrainTile tile = this.AddTile(x, z);
+			yield return new WaitUntil(() => tile.gameObject == null || tile.HasGenerated);
+		}
+	}
+
+	private TerrainTile AddTile(int x, int z) {
 		string key = this.TileID(x, z);
 		GameObject terrain = Terrain.CreateTerrainGameObject(new TerrainData());
 		terrain.name = $"TerrainTile.{key}";
@@ -38,6 +52,7 @@ public class TerrainManager : MonoBehaviour {
 		tile.manager = this;
 		tile.realWorld = new Lambert93(this.coords.x + x * this.Size, 0, this.coords.z + z * this.Size);
 		this.Tiles.Add(key, tile);
+		return tile;
 	}
 
 	private IEnumerator ComputeMinMax() {
@@ -49,6 +64,7 @@ public class TerrainManager : MonoBehaviour {
 		MNSRequest mnsRequest = GeoDataUtils.MNSRequest(size, bbox);
 		yield return mnsRequest.Execute();
 		if (mnsRequest.HasError) {
+			Debug.LogWarning("Terrain manager failed to load global alti on area");
 			Destroy(this.gameObject);
 			yield break;
 		}
