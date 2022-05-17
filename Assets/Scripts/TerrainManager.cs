@@ -8,9 +8,10 @@ public class TerrainManager : MonoBehaviour {
 	[field: SerializeField] public int Size { get; private set; } = 128;
 	[field: SerializeField] public int Resolution { get; private set; } = 1;
 	[SerializeField] private Lambert93 coords; // Example: new Lambert93(652285.51, 100, 6861635.77)
+	[SerializeField] private int renderDistance = 5;
+	[SerializeField] private int maxConcurrentGenerations = 4;
 	[SerializeField] private int minMaxEvaluationScale = 5;
 	[SerializeField] private int minMaxEvaluationSampling = 16;
-	[SerializeField] private int maxConcurrentGenerations = 4;
 
 	public float MinHeight { get; private set; }
 	public float MaxHeight { get; private set; }
@@ -19,13 +20,12 @@ public class TerrainManager : MonoBehaviour {
 	}
 
 	public Dictionary<string, TerrainTile> Tiles { get; private set; } = new Dictionary<string, TerrainTile>();
-	private Queue<(int x, int z)> generationQueue = new Queue<(int x, int z)>();
+	private PriorityQueue<(int x, int z)> generationQueue = new PriorityQueue<(int x, int z)>(new TileIDComparer());
 
 	private IEnumerator Start() {
 		yield return this.ComputeMinMax();
-		int size = 5;
-		for (int i = -size; i < size; i++)
-			for (int j = -size; j < size; j++)
+		for (int i = -this.renderDistance; i < this.renderDistance; i++)
+			for (int j = -this.renderDistance; j < this.renderDistance; j++)
 				this.generationQueue.Enqueue((i, j));
 		for (int i = 0; i < this.maxConcurrentGenerations; i++)
 			this.StartCoroutine(this.TilesGenerationFromQueue());
@@ -33,7 +33,7 @@ public class TerrainManager : MonoBehaviour {
 
 	private IEnumerator TilesGenerationFromQueue() {
 		while (this.enabled) {
-			yield return new WaitWhile(() => this.generationQueue.Count == 0);
+			yield return new WaitWhile(() => this.generationQueue.IsEmpty);
 			(int x, int z) = this.generationQueue.Dequeue();
 			TerrainTile tile = this.AddTile(x, z);
 			yield return new WaitUntil(() => tile.gameObject == null || tile.HasGenerated);
@@ -42,6 +42,8 @@ public class TerrainManager : MonoBehaviour {
 
 	private TerrainTile AddTile(int x, int z) {
 		string key = this.TileID(x, z);
+		if (this.Tiles.ContainsKey(key))
+			return this.Tiles[key];
 		GameObject terrain = Terrain.CreateTerrainGameObject(new TerrainData());
 		terrain.name = $"TerrainTile.{key}";
 		terrain.transform.position = new Vector3(x * this.Size, (float) -this.coords.y, z * this.Size);
@@ -51,7 +53,7 @@ public class TerrainManager : MonoBehaviour {
 		tile.z = z;
 		tile.manager = this;
 		tile.realWorld = new Lambert93(this.coords.x + x * this.Size, 0, this.coords.z + z * this.Size);
-		this.Tiles.Add(key, tile);
+		this.Tiles[key] = tile;
 		return tile;
 	}
 
@@ -75,4 +77,17 @@ public class TerrainManager : MonoBehaviour {
 	}
 
 	public string TileID(int x, int z) => $"{x},{z}";
+}
+
+public class TileIDComparer : Comparer<(int x, int z)> {
+	public override int Compare((int x, int z) a, (int x, int z) b) {
+		if (a == b)
+			return 0;
+		int cmp = Mathf.Abs(a.x) + Mathf.Abs(a.z) - Mathf.Abs(b.x) - Mathf.Abs(b.z);
+		if (cmp == 0) {
+			cmp = a.x - b.x;
+			return cmp == 0 ? a.z - b.z : cmp;
+		}
+		return cmp;
+	}
 }

@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
-using System.Globalization;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Common {
 	public class GeoDataUtils {
 		public static string BBOX(Lambert93 coords, Vector2 offsetMin, Vector2 offsetMax) {
-			FixCsharpBadDecimalSeparator();
+			CsharpUtils.FixCsharpBadDecimalSeparator();
 			return $"{coords.x - offsetMin.x},{coords.z - offsetMin.y},{coords.x + offsetMax.x},{coords.z + offsetMax.y}";
 		}
 
@@ -23,12 +21,6 @@ namespace Common {
 		public static string WXSRequestURL(string layer, string key, int size, string bbox, string format) {
 			return $"https://wxs.ign.fr/{key}/geoportail/r/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap" +
 			       $"&layers={layer}&CRS=EPSG:2154&BBOX={bbox}&WIDTH={size}&HEIGHT={size}&FORMAT={format}&STYLES=";
-		}
-
-		public static void FixCsharpBadDecimalSeparator() {
-			CultureInfo customCulture = (CultureInfo) Thread.CurrentThread.CurrentCulture.Clone();
-			customCulture.NumberFormat.NumberDecimalSeparator = ".";
-			Thread.CurrentThread.CurrentCulture = customCulture;
 		}
 	}
 
