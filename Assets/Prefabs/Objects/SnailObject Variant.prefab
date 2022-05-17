@@ -87,10 +87,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1745309539c3445eb55ea8dadc35d7d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCollectible: 1
+  <IsCollectible>k__BackingField: 1
+  <ReactivateOnRespawn>k__BackingField: 1
   model: {fileID: 60387787655519536, guid: b26d68b6d23f3b741ab8c9005585dc3e, type: 3}
-  color: {r: 0.6862745, g: 0, b: 0, a: 0}
   scale: 0.4
   offset: 0.3
+  <Duration>k__BackingField: 3
   <Strengh>k__BackingField: 0.4
-  <Duration>k__BackingField: 5
