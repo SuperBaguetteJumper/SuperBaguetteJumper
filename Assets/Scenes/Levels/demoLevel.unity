@@ -10937,6 +10937,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1897963672687656815, guid: 31efca6407f051c47a5172e4fbcc3481,
         type: 3}
+      propertyPath: useCurrentPosAsFirstCoord
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897963672687656815, guid: 31efca6407f051c47a5172e4fbcc3481,
+        type: 3}
       propertyPath: coordinates.Array.data[0].x
       value: 6.668666
       objectReference: {fileID: 0}

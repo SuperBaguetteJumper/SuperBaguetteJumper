@@ -46,5 +46,26 @@ namespace Platforms {
 			}
 			this.transform.position = to;
 		}
+
+		private void OnDrawGizmos() {
+			if (this.coordinates.Count == 0)
+				return;
+			Gizmos.color = new Color(1, 1, 1, 0.5f);
+			Vector3 start = this.useCurrentPosAsFirstCoord ? this.transform.position : this.coordinates[0];
+			Vector3 from = start;
+			for (int i = this.useCurrentPosAsFirstCoord ? 0 : 1; i < this.coordinates.Count; i++) {
+				Vector3 to = this.coordinates[i];
+				Gizmos.DrawLine(from, to);
+				from = to;
+			}
+			Gizmos.DrawLine(from, start);
+		}
+
+		private void OnDrawGizmosSelected() {
+			BoxCollider boxCollider = this.GetComponent<BoxCollider>();
+			Gizmos.color = new Color(0, 0.5f, 1, 0.25f);
+			for (int i = 0; i < this.coordinates.Count; i++)
+				Gizmos.DrawCube(this.coordinates[i], boxCollider.size);
+		}
 	}
 }
