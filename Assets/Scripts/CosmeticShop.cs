@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class CosmeticShop : MonoBehaviour {
 	[HideInInspector] public int CosmeticID;
 	[SerializeField] private Transform instanceContainer;
+	[SerializeField] private Text nameText;
 	[SerializeField] private Text priceText;
 
 	[field: NonSerialized]
@@ -33,6 +34,7 @@ public class CosmeticShop : MonoBehaviour {
         GameObject model = Instantiate(this.Cosmetic.Model, this.instanceContainer);
         foreach (Transform child in model.transform.GetComponentsInChildren<Transform>(true))
 	        child.gameObject.layer &= ~this.firstPersonHiddenLayer;
+		this.nameText.text = this.Cosmetic.Name;
 		this.priceText.text = this.Cosmetic.Cost.ToString();
 	}
 
