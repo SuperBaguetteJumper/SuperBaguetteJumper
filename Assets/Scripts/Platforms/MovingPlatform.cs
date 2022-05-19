@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Platforms {
 	public class MovingPlatform : MonoBehaviour {
 		[SerializeField] private bool useCurrentPosAsFirstCoord = true;
-		[SerializeField] [DraggableVector3] private List<Vector3> coordinates;
+		[SerializeField, DraggableVector3] private List<Vector3> coordinates;
 		[SerializeField] private float speed = 0.5f;
 		[SerializeField] private float initialDelay;
 		[SerializeField] private float waitDelay;
@@ -51,9 +51,10 @@ namespace Platforms {
 			if (this.coordinates.Count == 0)
 				return;
 			Gizmos.color = new Color(1, 1, 1, 0.5f);
-			Vector3 start = this.useCurrentPosAsFirstCoord ? this.transform.position : this.coordinates[0];
+			bool useCurrentPos = !Application.isPlaying && this.useCurrentPosAsFirstCoord;
+			Vector3 start = useCurrentPos ? this.transform.position : this.coordinates[0];
 			Vector3 from = start;
-			for (int i = this.useCurrentPosAsFirstCoord ? 0 : 1; i < this.coordinates.Count; i++) {
+			for (int i = useCurrentPos ? 0 : 1; i < this.coordinates.Count; i++) {
 				Vector3 to = this.coordinates[i];
 				Gizmos.DrawLine(from, to);
 				from = to;

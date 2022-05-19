@@ -3,6 +3,7 @@ using Events;
 using Objects;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour {
 	[SerializeField] private Transform cameraContainer;
@@ -63,6 +64,10 @@ public class Player : MonoBehaviour {
 		EventManager.Instance.AddListener<WineBottleObjectPickedUpEvent>(this.OnWineBottleObjectPickedUp);
 	}
 
+	private void Start() {
+		EventManager.Instance.Raise(new PlayerLoadedEvent(this));
+	}
+
 	protected virtual void OnDestroy() {
 		EventManager.Instance.RemoveListener<PlayerSpawnedEvent>(this.OnPlayerSpawned);
 		EventManager.Instance.RemoveListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
@@ -110,11 +115,7 @@ public class Player : MonoBehaviour {
 		float xRot = Time.fixedDeltaTime * this.rotationSpeed * 90 * mouseYInput;
 		if (xRot < ROTATION_EPSILON && xRot > -ROTATION_EPSILON)
 			xRot = 0;
-		float rot = angle.x - xRot;
-		if (rot < 0 || rot > 360) rot %= 360;
-		if (rot > 90 && rot < 180) rot = 90;
-		if (rot < 270 && rot >= 180) rot = 270;
-		this.cameraContainer.localEulerAngles = new Vector3(rot, angle.y, angle.z);
+		this.cameraContainer.localEulerAngles = new Vector3(LimitCameraRot(angle.x - xRot), angle.y, angle.z);
 
 		// Handle jump
 		bool jumping = Input.GetButton("Jump");
@@ -221,10 +222,17 @@ public class Player : MonoBehaviour {
 		while (Time.time - start < length) {
 			Vector3 delta = Random.insideUnitSphere * strengh;
             Vector3 eulerAngles = this.cameraContainer.localEulerAngles;
-            eulerAngles.x += delta.y;
+            eulerAngles.x = LimitCameraRot(eulerAngles.x + delta.y);
             this.cameraContainer.localEulerAngles = eulerAngles;
             this.transform.rotation = Quaternion.AngleAxis(delta.x + delta.z, this.transform.up) * this.transform.rotation;
             yield return null;
 		}
+	}
+
+	private static float LimitCameraRot(float rot) {
+		if (rot < 0 || rot > 360) return rot % 360;
+		if (rot > 90 && rot < 180) return 90;
+		if (rot < 270 && rot >= 180) return 270;
+		return rot;
 	}
 }

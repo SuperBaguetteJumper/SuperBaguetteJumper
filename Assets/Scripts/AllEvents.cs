@@ -76,6 +76,14 @@ public class LevelWonEvent : Event {
 
 #region Player Events
 
+/// <summary>Player was loaded</summary>
+public class PlayerLoadedEvent : Event {
+	public Player Player { get; }
+
+	public PlayerLoadedEvent(Player player) {
+		this.Player = player;
+	}
+}
 /// <summary>Player spawned in the level</summary>
 public class PlayerSpawnedEvent : Event {
 	public Transform RespawnPoint { get; }
@@ -143,6 +151,33 @@ public class BaguetteObjectPickedUpEvent : ObjectPickedUpEvent<BaguetteObject> {
 /// <summary>???</summary>
 public class ScoreItemEvent : Event {
 	public float eScore;
+}
+
+#endregion
+
+#region Cosmetics Events
+
+/// <summary>Cosmetic is being involved in an event (preview, unlock, ...)</summary>
+public abstract class CosmeticEvent : Event {
+	public Cosmetic Cosmetic { get; }
+	public Player Player { get; }
+
+	public CosmeticEvent(Cosmetic cosmetic, Player player) {
+		this.Cosmetic = cosmetic;
+		this.Player = player;
+	}
+}
+/// <summary>Cosmetic is being unlocked</summary>
+public class CosmeticUnlockedEvent : CosmeticEvent {
+	public CosmeticUnlockedEvent(Cosmetic cosmetic, Player player) : base(cosmetic, player) {}
+}
+/// <summary>Cosmetic is being previewed</summary>
+public class CosmeticPreviewBeganEvent : CosmeticEvent {
+	public CosmeticPreviewBeganEvent(Cosmetic cosmetic, Player player) : base(cosmetic, player) {}
+}
+/// <summary>Cosmetic is being unpreviewed</summary>
+public class CosmeticPreviewEndedEvent : CosmeticEvent {
+	public CosmeticPreviewEndedEvent(Cosmetic cosmetic, Player player) : base(cosmetic, player) {}
 }
 
 #endregion
