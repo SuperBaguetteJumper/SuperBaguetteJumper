@@ -1,6 +1,5 @@
 using System.Collections;
 using Events;
-using Objects;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -58,10 +57,8 @@ public class Player : MonoBehaviour {
 		Cursor.visible = false;
 		EventManager.Instance.AddListener<PlayerSpawnedEvent>(this.OnPlayerSpawned);
 		EventManager.Instance.AddListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
-		EventManager.Instance.AddListener<SnailObjectPickedUpEvent>(this.OnSnailObjectPickedUp);
-		EventManager.Instance.AddListener<CheeseObjectPickedUpEvent>(this.OnCheeseObjectPickedUp);
-		EventManager.Instance.AddListener<FrogLegObjectPickedUpEvent>(this.OnFrogLegObjectPickedUp);
-		EventManager.Instance.AddListener<WineBottleObjectPickedUpEvent>(this.OnWineBottleObjectPickedUp);
+		EventManager.Instance.AddListener<EffectActivatedEvent>(this.OnEffectActivated);
+		EventManager.Instance.AddListener<SpringObjectPickedUpEvent>(this.OnSpringObjectPickedUp);
 	}
 
 	private void Start() {
@@ -71,10 +68,8 @@ public class Player : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		EventManager.Instance.RemoveListener<PlayerSpawnedEvent>(this.OnPlayerSpawned);
 		EventManager.Instance.RemoveListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
-		EventManager.Instance.RemoveListener<SnailObjectPickedUpEvent>(this.OnSnailObjectPickedUp);
-		EventManager.Instance.RemoveListener<CheeseObjectPickedUpEvent>(this.OnCheeseObjectPickedUp);
-		EventManager.Instance.RemoveListener<FrogLegObjectPickedUpEvent>(this.OnFrogLegObjectPickedUp);
-		EventManager.Instance.RemoveListener<WineBottleObjectPickedUpEvent>(this.OnWineBottleObjectPickedUp);
+		EventManager.Instance.RemoveListener<EffectActivatedEvent>(this.OnEffectActivated);
+		EventManager.Instance.RemoveListener<SpringObjectPickedUpEvent>(this.OnSpringObjectPickedUp);
 	}
 
 	private void FixedUpdate() {
@@ -158,49 +153,50 @@ public class Player : MonoBehaviour {
 		this.Die();
 	}
 
-	private void OnSnailObjectPickedUp(SnailObjectPickedUpEvent e) {
-		this.StartCoroutine(this.SnailEffect(e.Object));
+	private void OnEffectActivated(EffectActivatedEvent e) {
+		switch (e.Effect) {
+		case Effect.Slowness:
+			this.StartCoroutine(this.SlownessEffect(e.Manager, e.Strengh));
+			break;
+		case Effect.Speedness:
+			this.StartCoroutine(this.SpeednessEffect(e.Manager, e.Strengh));
+			break;
+		case Effect.JumpBoost:
+			this.StartCoroutine(this.JumpBoostEffect(e.Manager, e.Strengh));
+			break;
+		case Effect.Drunkness:
+			this.StartCoroutine(this.BlurEffect(e.Manager));
+			this.StartCoroutine(this.ShakeEffect(e.Manager, e.Strengh));
+			break;
+		}
 	}
 
-	private IEnumerator SnailEffect(SnailObject snail) {
-		this.SpeedModifier -= snail.Strengh;
-		yield return new WaitForSeconds(snail.Duration);
-		this.SpeedModifier += snail.Strengh;
+	private IEnumerator SlownessEffect(EffectsManager manager, float strengh) {
+		this.SpeedModifier -= strengh;
+		yield return new WaitWhile(() => manager.HasSlownessEffect);
+		this.SpeedModifier += strengh;
 	}
 
-	private void OnCheeseObjectPickedUp(CheeseObjectPickedUpEvent e) {
-		this.StartCoroutine(this.CheeseEffect(e.Object));
+	private IEnumerator SpeednessEffect(EffectsManager manager, float strengh) {
+		this.SpeedModifier += strengh;
+		yield return new WaitWhile(() => manager.HasSpeednessEffect);
+		this.SpeedModifier -= strengh;
 	}
 
-	private IEnumerator CheeseEffect(CheeseObject cheese) {
-		this.SpeedModifier += cheese.Strengh;
-		yield return new WaitForSeconds(cheese.Duration);
-		this.SpeedModifier -= cheese.Strengh;
+	private IEnumerator JumpBoostEffect(EffectsManager manager, float strengh) {
+		this.JumpModifier += strengh;
+		yield return new WaitWhile(() => manager.HasJumpBoostEffect);
+		this.JumpModifier -= strengh;
 	}
 
-	private void OnFrogLegObjectPickedUp(FrogLegObjectPickedUpEvent e) {
-		this.StartCoroutine(this.FrogLegEffect(e.Object));
-	}
-
-	private IEnumerator FrogLegEffect(FrogLegObject frogLeg) {
-		this.JumpModifier += frogLeg.Strengh;
-		yield return new WaitForSeconds(frogLeg.Duration);
-		this.JumpModifier -= frogLeg.Strengh;
-	}
-
-	private void OnWineBottleObjectPickedUp(WineBottleObjectPickedUpEvent e) {
-		this.StartCoroutine(this.WineBottleEffect(e.Object));
-		this.StartCoroutine(this.ShakeEffect(e.Object.Duration, e.Object.Strengh));
-	}
-
-	private IEnumerator WineBottleEffect(WineBottleObject wineBottle) {
+	private IEnumerator BlurEffect(EffectsManager manager) {
 		GameObject overlay = Instantiate(Resources.Load<GameObject>("BlurOverlay"));
 		Image image = overlay.GetComponentInChildren<Image>();
 		Color color = image.color;
 		yield return this.BlurEffectTransition(image, color, true);
 		color.a = 1;
 		image.color = color;
-		yield return new WaitForSeconds(wineBottle.Duration - 1);
+		yield return new WaitWhile(() => manager.HasDrunknessEffect);
 		yield return this.BlurEffectTransition(image, color, false);
 		Destroy(overlay);
 	}
@@ -217,9 +213,8 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator ShakeEffect(float length, float strengh) {
-		float start = Time.time;
-		while (Time.time - start < length) {
+	private IEnumerator ShakeEffect(EffectsManager manager, float strengh) {
+		while (manager.HasDrunknessEffect) {
 			Vector3 delta = Random.insideUnitSphere * strengh;
             Vector3 eulerAngles = this.cameraContainer.localEulerAngles;
             eulerAngles.x = LimitCameraRot(eulerAngles.x + delta.y);
@@ -227,6 +222,13 @@ public class Player : MonoBehaviour {
             this.transform.rotation = Quaternion.AngleAxis(delta.x + delta.z, this.transform.up) * this.transform.rotation;
             yield return null;
 		}
+	}
+
+	private void OnSpringObjectPickedUp(SpringObjectPickedUpEvent e) {
+		Vector3 velocity = this.rigidbody.velocity;
+		velocity.y = 0;
+		this.rigidbody.velocity = velocity;
+		this.rigidbody.AddForce(0, e.Object.Force, 0, ForceMode.Impulse);
 	}
 
 	private static float LimitCameraRot(float rot) {

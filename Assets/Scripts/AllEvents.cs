@@ -1,4 +1,5 @@
-﻿using Elements.Flags;
+﻿using System.Collections.Generic;
+using Elements.Flags;
 using Objects;
 using UnityEngine;
 using Event = Events.Event;
@@ -142,6 +143,33 @@ public class CoinObjectPickedUpEvent : ObjectPickedUpEvent<CoinObject> {
 /// <summary>Baguette (extra life) object has been picked up</summary>
 public class BaguetteObjectPickedUpEvent : ObjectPickedUpEvent<BaguetteObject> {
 	public BaguetteObjectPickedUpEvent(BaguetteObject obj) : base(obj) {}
+}
+/// <summary>Spring (vertical propulsion) object has been picked up</summary>
+public class SpringObjectPickedUpEvent : ObjectPickedUpEvent<SpringObject> {
+	public SpringObjectPickedUpEvent(SpringObject obj) : base(obj) {}
+}
+
+#endregion
+
+#region Effects Events
+
+public class EffectActivatedEvent : Event {
+	public EffectsManager Manager { get; }
+	public Effect Effect { get; }
+	public float Strengh { get; }
+
+	public EffectActivatedEvent(EffectsManager manager, Effect effect, float strengh) {
+		this.Manager = manager;
+		this.Effect = effect;
+		this.Strengh = strengh;
+	}
+}
+public class EffectsUpdatedEvent : Event {
+	public Dictionary<Effect, float> Durations { get; }
+
+	public EffectsUpdatedEvent(Dictionary<Effect, float> durations) {
+		this.Durations = durations;
+	}
 }
 
 #endregion
