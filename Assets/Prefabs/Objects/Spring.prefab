@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6066666352092404730}
   m_Layer: 0
-  m_Name: Piege
+  m_Name: Spring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
