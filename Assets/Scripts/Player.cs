@@ -34,6 +34,10 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	public Vector3 LookPosition => this.cameraContainer.position;
+	public Vector3 LookDirection => this.cameraContainer.forward;
+	public bool ViewLocked { get; set; }
+
 	public float SpeedModifier { get; private set; }
 	public float JumpModifier { get; private set; }
 
@@ -77,8 +81,8 @@ public class Player : MonoBehaviour {
 		bool onGround = this.OnGround;
 		float vInput = Input.GetAxis("Vertical");
 		float hInput = Input.GetAxis("Horizontal");
-		float mouseXInput = Input.GetAxisRaw("Mouse X");
-		float mouseYInput = Input.GetAxisRaw("Mouse Y");
+		float mouseXInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse X");
+		float mouseYInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse Y");
 
 		// Compute move modifier
 		float moveModifier = this.SpeedModifier;
@@ -124,6 +128,10 @@ public class Player : MonoBehaviour {
 		// Kill player when too low
 		if (this.rigidbody.position.y < -10)
 			this.Die();
+	}
+
+	public void ForceMove(Vector3 move) {
+		this.transform.position = this.transform.position + this.RestrictMove(move);
 	}
 
 	private Vector3 RestrictMove(Vector3 move) {

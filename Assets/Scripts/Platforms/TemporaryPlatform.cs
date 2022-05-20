@@ -9,11 +9,11 @@ namespace Platforms {
 		[SerializeField] private GameObject hologram;
 
 		private new BoxCollider collider;
-		private TemporaryPlatformPressurePlate pressurePlate;
+		private PlatformPressurePlate pressurePlate;
 
 		private void Awake() {
 			this.collider = this.GetComponent<BoxCollider>();
-			this.pressurePlate = this.GetComponentInChildren<TemporaryPlatformPressurePlate>();
+			this.pressurePlate = this.GetComponentInChildren<PlatformPressurePlate>();
 		}
 
 		private IEnumerator Start() {
@@ -23,7 +23,7 @@ namespace Platforms {
                 this.SetHidden(true);
                 yield return new WaitForSeconds(this.cooldownBeforeRespawn);
                 this.SetHidden(false);
-				this.pressurePlate.Desactivate();
+				this.pressurePlate.Deactivate();
 			}
 		}
 

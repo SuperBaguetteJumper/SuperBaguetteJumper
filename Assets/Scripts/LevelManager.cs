@@ -12,16 +12,31 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] private int initialLives = 3;
 
 	private int lastCheckpoint = -1;
-	private int lives;
-	private int coins;
+	private int _lives;
+	private int _coins;
 	private PhysicalObject[] collectibles;
+
+	private int lives {
+		get => this._lives;
+		set {
+			this._lives = value;
+			EventManager.Instance.Raise(new HealthUpdatedEvent(value, this.initialLives));
+		}
+	}
+
+	private int coins {
+		get => this._coins;
+		set {
+			this._coins = value;
+			EventManager.Instance.Raise(new MoneyUpdatedEvent(value));
+		}
+	}
 
 	public Transform RespawnPoint {
 		get => this.lastCheckpoint < 0 || this.lastCheckpoint >= this.checkpoints.Count ? this.start.transform : this.checkpoints[this.lastCheckpoint].transform;
 	}
 
 	protected void Awake() {
-		this.lives = this.initialLives;
 		this.collectibles = FindObjectsOfType<PhysicalObject>();
 		Instantiate(Resources.Load<GameObject>("Player"));
 		EventManager.Instance.AddListener<CheckpointReachedEvent>(this.OnCheckpointReached);
@@ -32,7 +47,10 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	private void Start() {
+		this.lives = this.initialLives;
+		EventManager.Instance.Raise(new LevelStartedEvent(Time.time));
 		EventManager.Instance.Raise(new PlayerSpawnedEvent(this.start.transform));
+		EventManager.Instance.Raise(new MoneyUpdatedEvent(this.coins));
 	}
 
 	private void OnDestroy() {

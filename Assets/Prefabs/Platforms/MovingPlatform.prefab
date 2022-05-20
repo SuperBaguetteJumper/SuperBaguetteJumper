@@ -1,5 +1,62 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7823275051647300143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8348842497847343280}
+  - component: {fileID: 7767041169600645142}
+  - component: {fileID: 6216938370546435906}
+  m_Layer: 0
+  m_Name: PressurePlate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8348842497847343280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7823275051647300143}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 594152397221144009}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7767041169600645142
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7823275051647300143}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99, y: 0.01, z: 0.99}
+  m_Center: {x: 0, y: 0.1, z: 0}
+--- !u!114 &6216938370546435906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7823275051647300143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef48b98b238a45b782d8d2233437dbd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2725945099739917626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -110,6 +167,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2725945099739917626}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &594152397221144009 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3308556747968792819, guid: 8d482eb206d9f354ead62e833557f297,
+    type: 3}
+  m_PrefabInstance: {fileID: 2725945099739917626}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1897963672687656815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,6 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1769ebfb7df4bf38120be63d91a3852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useCurrentPosAsFirstCoord: 1
   coordinates: []
   speed: 0.5
   initialDelay: 0
