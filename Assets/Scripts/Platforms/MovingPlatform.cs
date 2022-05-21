@@ -11,6 +11,8 @@ namespace Platforms {
 		[SerializeField] private float waitDelay;
 		[SerializeField] private AnimationCurve curve;
 
+		private PlatformPressurePlate pressurePlate;
+
 		private void Awake() {
 			if (this.useCurrentPosAsFirstCoord)
 				this.coordinates.Insert(0, this.transform.position);
@@ -21,6 +23,7 @@ namespace Platforms {
 			}
 			if (!this.useCurrentPosAsFirstCoord)
 				this.transform.position = this.coordinates[0];
+			this.pressurePlate = this.GetComponentInChildren<PlatformPressurePlate>();
 		}
 
 		private IEnumerator Start() {
@@ -41,7 +44,13 @@ namespace Platforms {
 			float duration;
 			while ((duration = Time.time - start) < length) {
 				float progress = duration / length;
-				this.transform.position = Vector3.Lerp(from, to, this.curve.Evaluate(progress));
+				Vector3 before = this.transform.position;
+				Vector3 after = Vector3.Lerp(from, to, this.curve.Evaluate(progress));
+				this.transform.position = after;
+				if (this.pressurePlate.Player != null) {
+					Vector3 delta = after - before;
+					this.pressurePlate.Player.ForceMove(delta);
+				}
 				yield return null;
 			}
 			this.transform.position = to;

@@ -8,12 +8,19 @@ using UnityEngine.UI;
 public class CosmeticShop : MonoBehaviour {
 	[HideInInspector] public int CosmeticID;
 	[SerializeField] private Transform instanceContainer;
-	[SerializeField] private Text nameText;
-	[SerializeField] private Text priceText;
+	[SerializeField] private Text[] nameTexts;
+	[SerializeField] private Text[] priceTexts;
+	[SerializeField] private GameObject buyOverlay;
+	[SerializeField] private Button confirmBuy;
+	[SerializeField] private Button cancelBuy;
 
 	[field: NonSerialized]
 	public Cosmetic Cosmetic { get; set; }
 	private int firstPersonHiddenLayer;
+	private new Collider collider;
+	private Player player;
+
+	private static bool ShopOpen;
 
 	private void Start() {
 		this.firstPersonHiddenLayer = LayerMask.NameToLayer("First Person Hidden");
@@ -25,6 +32,50 @@ public class CosmeticShop : MonoBehaviour {
 			Debug.LogWarning($"Invalid cosmetic shop: {this.name} (cosmetic ID #{this.CosmeticID} not found). Destroying!");
 			Destroy(this.gameObject);
 		}
+		this.collider = this.GetComponent<Collider>();
+		this.player = FindObjectOfType<Player>();
+		this.confirmBuy.onClick.AddListener(this.Buy);
+		this.cancelBuy.onClick.AddListener(this.CloseBuyOverlay);
+	}
+
+	private void Update() {
+		if (!ShopOpen && Input.GetButtonDown("Fire1")) {
+			if (this.collider.bounds.Contains(this.player.LookPosition))
+				this.OpenBuyOverlay();
+			else {
+				RaycastHit hit;
+				if (Physics.Raycast(this.player.LookPosition, this.player.LookDirection, out hit, 5) && hit.collider == this.collider)
+					this.OpenBuyOverlay();
+			}
+		}
+		if (ShopOpen && Input.GetButtonDown("Cancel"))
+			this.CloseBuyOverlay();
+	}
+
+	private void Buy() {
+		MoneyWithdrawEvent e = new MoneyWithdrawEvent(this.Cosmetic.Cost);
+		EventManager.Instance.Raise(e);
+		if (e.Success) {
+			EventManager.Instance.Raise(new CosmeticUnlockedEvent(this.Cosmetic, this.player));
+			this.CloseBuyOverlay();
+		} else
+			Debug.Log("Not enough money!");
+	}
+
+	private void OpenBuyOverlay() {
+		ShopOpen = true;
+		this.buyOverlay.SetActive(true);
+		Cursor.lockState = CursorLockMode.None;
+		Cursor.visible = true;
+		this.player.ViewLocked = true;
+	}
+
+	private void CloseBuyOverlay() {
+		ShopOpen = false;
+		this.buyOverlay.SetActive(false);
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+		this.player.ViewLocked = false;
 	}
 
 	public void RefreshModel() {
@@ -34,8 +85,10 @@ public class CosmeticShop : MonoBehaviour {
         GameObject model = Instantiate(this.Cosmetic.Model, this.instanceContainer);
         foreach (Transform child in model.transform.GetComponentsInChildren<Transform>(true))
 	        child.gameObject.layer &= ~this.firstPersonHiddenLayer;
-		this.nameText.text = this.Cosmetic.Name;
-		this.priceText.text = this.Cosmetic.Cost.ToString();
+        for (var i = 0; i < this.nameTexts.Length; i++)
+	        this.nameTexts[i].text = this.Cosmetic.Name;
+        for (var i = 0; i < this.priceTexts.Length; i++)
+	        this.priceTexts[i].text = this.Cosmetic.Cost.ToString();
 	}
 
 	private void ClearModel() {
@@ -45,21 +98,23 @@ public class CosmeticShop : MonoBehaviour {
 
 	private void OnDestroy() {
 		this.ClearModel();
+		this.confirmBuy.onClick.RemoveListener(this.Buy);
+		this.cancelBuy.onClick.RemoveListener(this.CloseBuyOverlay);
 	}
 
 	private void OnTriggerEnter(Collider other) {
 		if (this.Cosmetic == null)
 			return;
-		Player player = other.gameObject.GetComponent<Player>();
-		if (player != null)
-			EventManager.Instance.Raise(new CosmeticPreviewBeganEvent(this.Cosmetic, player));
+		Player p = other.gameObject.GetComponent<Player>();
+		if (p != null)
+			EventManager.Instance.Raise(new CosmeticPreviewBeganEvent(this.Cosmetic, p));
 	}
 
 	private void OnTriggerExit(Collider other) {
 		if (this.Cosmetic == null)
 			return;
-		Player player = other.gameObject.GetComponent<Player>();
-		if (player != null)
-			EventManager.Instance.Raise(new CosmeticPreviewEndedEvent(this.Cosmetic, player));
+		Player p = other.gameObject.GetComponent<Player>();
+		if (p != null)
+			EventManager.Instance.Raise(new CosmeticPreviewEndedEvent(this.Cosmetic, p));
 	}
 }

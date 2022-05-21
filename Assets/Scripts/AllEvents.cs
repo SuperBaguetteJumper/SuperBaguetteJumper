@@ -61,7 +61,13 @@ public class EndReachedEvent : FlagReachedEvent {
 	public EndReachedEvent(Flag flag) : base(flag) {}
 }
 /// <summary>Level has been started</summary>
-public class LevelStartedEvent : Event {}
+public class LevelStartedEvent : Event {
+	public float Time { get; }
+
+	public LevelStartedEvent(float time) {
+		this.Time = time;
+	}
+}
 /// <summary>Level has been lost</summary>
 public class LevelLostEvent : Event {}
 /// <summary>Level has been won</summary>
@@ -70,6 +76,16 @@ public class LevelWonEvent : Event {
 
 	public LevelWonEvent(int coins) {
 		this.Coins = coins;
+	}
+}
+/// <summary>Level health has been updated</summary>
+public class HealthUpdatedEvent : Event {
+	public int Count { get; }
+	public int Total { get; }
+
+	public HealthUpdatedEvent(int count, int total) {
+		this.Count = count;
+		this.Total = total;
 	}
 }
 
@@ -206,6 +222,28 @@ public class CosmeticPreviewBeganEvent : CosmeticEvent {
 /// <summary>Cosmetic is being unpreviewed</summary>
 public class CosmeticPreviewEndedEvent : CosmeticEvent {
 	public CosmeticPreviewEndedEvent(Cosmetic cosmetic, Player player) : base(cosmetic, player) {}
+}
+
+#endregion
+
+#region Money Events
+
+/// <summary>A transaction is requested</summary>
+public class MoneyWithdrawEvent : Event {
+	public int Amount { get; }
+	public bool Success { get; set; }
+
+	public MoneyWithdrawEvent(int amount) {
+		this.Amount = amount;
+	}
+}
+/// <summary>Money has been updated</summary>
+public class MoneyUpdatedEvent : Event {
+	public int Coins { get; }
+
+	public MoneyUpdatedEvent(int coins) {
+		this.Coins = coins;
+	}
 }
 
 #endregion
