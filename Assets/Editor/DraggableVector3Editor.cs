@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Editor {
@@ -26,6 +27,10 @@ namespace Editor {
 						Handles.Label(property.vector3Value, property.name);
 						property.vector3Value = Handles.PositionHandle(property.vector3Value, Quaternion.identity);
 						this.serializedObject.ApplyModifiedProperties();
+						if (GUI.changed && this.target is MonoBehaviour) {
+							EditorUtility.SetDirty(this.target);
+							EditorSceneManager.MarkSceneDirty(((MonoBehaviour) this.target).gameObject.scene);
+						}
 					}
 				} else if (property.propertyType == SerializedPropertyType.Generic) {
 					FieldInfo field = this.serializedObject.targetObject.GetType().GetField(property.name, BindingFlags.Instance | BindingFlags.NonPublic);
@@ -41,6 +46,10 @@ namespace Editor {
 								Handles.Label(vector3, property.name + "[" + i + "]");
 								list[i] = Handles.PositionHandle(vector3, Quaternion.identity);
 								this.serializedObject.ApplyModifiedProperties();
+								if (GUI.changed && this.target is MonoBehaviour) {
+									EditorUtility.SetDirty(this.target);
+									EditorSceneManager.MarkSceneDirty(((MonoBehaviour) this.target).gameObject.scene);
+								}
 							}
 						}
 					}

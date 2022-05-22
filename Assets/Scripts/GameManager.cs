@@ -27,6 +27,7 @@ public class GameManager : Singleton<GameManager> {
 	[SerializeField] private Button resumeButton;
 	[SerializeField] private Button restartButton;
 	[SerializeField] private Button returnButton;
+	[SerializeField] private Button menuButton;
 
 	private GameState gameState;
 	private string level;
@@ -59,6 +60,7 @@ public class GameManager : Singleton<GameManager> {
 		this.resumeButton.onClick.AddListener(this.Resume);
 		this.restartButton.onClick.AddListener(this.Restart);
 		this.returnButton.onClick.AddListener(this.Return);
+		this.menuButton.onClick.AddListener(this.Menu);
 	}
 
 	private void Start() {
@@ -94,6 +96,7 @@ public class GameManager : Singleton<GameManager> {
 		this.resumeButton.onClick.RemoveListener(this.Resume);
 		this.restartButton.onClick.RemoveListener(this.Restart);
 		this.returnButton.onClick.RemoveListener(this.Return);
+		this.menuButton.onClick.RemoveListener(this.Menu);
 	}
 
 	private void Play() {
@@ -136,7 +139,8 @@ public class GameManager : Singleton<GameManager> {
 		bool isInLevel = this.gameState == GameState.Level;
 		this.gameState = GameState.Pause;
 		this.restartButton.interactable = isInLevel;
-		this.returnButton.interactable = isInLevel;
+		this.returnButton.gameObject.SetActive(isInLevel);
+		this.menuButton.gameObject.SetActive(!isInLevel);
 		this.pauseOverlay.SetActive(true);
 		Time.timeScale = 0;
 		UnlockCursor();
@@ -163,6 +167,12 @@ public class GameManager : Singleton<GameManager> {
 		this.pauseOverlay.SetActive(false);
 		Time.timeScale = 1;
 		LockCursor();
+	}
+
+	private void Menu() {
+		this.gameState = GameState.TitleScreen;
+		this.pauseOverlay.SetActive(false);
+		this.titleScreen.SetActive(true);
 	}
 
 	private void Quit() {
