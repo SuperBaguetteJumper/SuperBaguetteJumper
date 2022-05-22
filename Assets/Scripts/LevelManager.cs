@@ -92,7 +92,7 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	private void OnBaguetteObjectPickedUp(BaguetteObjectPickedUpEvent e) {
-		if (this.lives <= this.initialLives)
+		if (this.lives < this.initialLives)
 			this.lives++;
 		else
 			e.CanPickup = false;
