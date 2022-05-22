@@ -1,4 +1,5 @@
 <SFX_SETUP>
+    <SFX name="Baguette" volume="0.5" />
     <SFX name="Checkpoint" volume="0.7" />
     <SFX name="Cheese" volume="0.8" />
     <SFX name="Click" volume="1" />

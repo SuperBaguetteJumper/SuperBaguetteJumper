@@ -4864,3 +4864,4 @@ MonoBehaviour:
   model: {fileID: 1482693698504912236, guid: a863062eab54c304786b19e6e9c03f93, type: 3}
   scale: 0.4
   offset: 0.3
+  sound: Baguette
