@@ -1,210 +1,149 @@
-﻿using System.Collections;
-using Common;
+﻿using Common;
 using Events;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameState {
-	GAME_MENU,
-	GAME_PLAY,
-	GAME_NEXT_LEVEL,
-	GAME_PAUSE,
-	GAME_OVER,
-	GAME_VICTORY
+	TitleScreen,
+	Hub,
+	Level,
+	Pause,
+	End
 }
 
-public class GameManager : Manager<GameManager> {
-	#region Time
-
-	private void SetTimeScale(float newTimeScale) {
-		Time.timeScale = newTimeScale;
-	}
-
-	#endregion
-
-	#region Manager implementation
-
-	protected override IEnumerator InitCoroutine() {
-		this.Menu();
-		this.InitNewGame(); // Essentiellement pour que les statistiques du jeu soient mise à jour en HUD
-		yield break;
-	}
-
-	#endregion
-
-	#region Game flow & Gameplay
-
-	// Game initialization
-	private void InitNewGame(bool raiseStatsEvent = true) {
-		this.SetScore(0, raiseStatsEvent);
-	}
-
-	#endregion
-
-	#region Callbacks to events issued by Score items
-
-	private void ScoreHasBeenGained(ScoreItemEvent e) {
-		if (this.IsPlaying)
-			IncrementScore(e.eScore);
-	}
-
-	#endregion
-
-	#region Game State
+public class GameManager : Singleton<GameManager> {
+	[Header("Title Screen")]
+	[SerializeField] private GameObject titleScreen;
+	[SerializeField] private Button playButton;
+	[SerializeField] private Button quitButton;
+	[Header("End Overlay")]
+	[SerializeField] private GameObject endOverlay;
+	[SerializeField] private Text levelStateText;
+	[SerializeField] private Button continueButton;
+	[Header("Pause Overlay")]
+	[SerializeField] private GameObject pauseOverlay;
+	[SerializeField] private Button resumeButton;
+	[SerializeField] private Button restartButton;
+	[SerializeField] private Button returnButton;
 
 	private GameState gameState;
-	public bool IsPlaying => this.gameState == GameState.GAME_PLAY;
 
-	#endregion
+	public bool IsPlaying => this.gameState == GameState.Hub || this.gameState == GameState.Level;
 
-	#region Lives
-
-	[Header("GameManager")]
-	[SerializeField] private int nStartLives;
-
-	public int NLives { get; private set; }
-
-	private void DecrementNLives(int decrement) {
-		this.SetNLives(this.NLives - decrement);
+	public int Money {
+		get => PlayerPrefs.GetInt("Money", 0);
+		private set => PlayerPrefs.SetInt("Money", value);
 	}
 
-	private void SetNLives(int nLives) {
-		this.NLives = nLives;
-		EventManager.Instance.Raise(new GameStatisticsChangedEvent { eBestScore = this.BestScore, eScore = this.score, eNLives = this.NLives });
+	protected override void Awake() {
+		base.Awake();
+		DontDestroyOnLoad(this.gameObject);
+		EventManager.Instance.AddListener<LevelLaunchEvent>(this.OnLevelLaunch);
+		EventManager.Instance.AddListener<LevelWonEvent>(this.OnLevelWon);
+		EventManager.Instance.AddListener<LevelLostEvent>(this.OnLevelLost);
+		// Title Screen
+		this.playButton.onClick.AddListener(this.Play);
+		this.quitButton.onClick.AddListener(this.Quit);
+		// End Overlay
+		this.continueButton.onClick.AddListener(this.Continue);
+		// Pause Overlay
+		this.resumeButton.onClick.AddListener(this.Resume);
+		this.restartButton.onClick.AddListener(this.Restart);
+		this.returnButton.onClick.AddListener(this.Return);
 	}
 
-	#endregion
+	private void Start() {
+		this.gameState = GameState.TitleScreen;
+		this.titleScreen.SetActive(true);
+	}
 
-	#region Score
-
-	private float score;
-
-	public float Score {
-		get => this.score;
-		set {
-			this.score = value;
-			this.BestScore = Mathf.Max(this.BestScore, value);
+	private void Update() {
+		if (Input.GetButtonDown("Cancel")) {
+			if (this.IsPlaying)
+            	this.Pause();
+            else if (this.gameState == GameState.Pause)
+            	this.Resume();
+			else if (this.gameState == GameState.End)
+				this.Continue();
 		}
 	}
 
-	public float BestScore {
-		get => PlayerPrefs.GetFloat("BEST_SCORE", 0);
-		set => PlayerPrefs.SetFloat("BEST_SCORE", value);
-	}
-
-	private void IncrementScore(float increment) {
-		this.SetScore(score + increment);
-	}
-
-	private void SetScore(float score, bool raiseEvent = true) {
-		this.Score = score;
-		if (raiseEvent)
-			EventManager.Instance.Raise(new GameStatisticsChangedEvent { eBestScore = this.BestScore, eScore = this.score, eNLives = this.NLives });
-	}
-
-	#endregion
-
-	#region Events' subscription
-
-	public override void SubscribeEvents() {
-		base.SubscribeEvents();
-
-		// MainMenuManager
-		EventManager.Instance.AddListener<MainMenuButtonClickedEvent>(this.MainMenuButtonClicked);
-		EventManager.Instance.AddListener<PlayButtonClickedEvent>(this.PlayButtonClicked);
-		EventManager.Instance.AddListener<ResumeButtonClickedEvent>(this.ResumeButtonClicked);
-		EventManager.Instance.AddListener<EscapeButtonClickedEvent>(this.EscapeButtonClicked);
-		EventManager.Instance.AddListener<QuitButtonClickedEvent>(this.QuitButtonClicked);
-
-		// Score Item
-		EventManager.Instance.AddListener<ScoreItemEvent>(this.ScoreHasBeenGained);
-	}
-
-	public override void UnsubscribeEvents() {
-		base.UnsubscribeEvents();
-
-		// MainMenuManager
-		EventManager.Instance.RemoveListener<MainMenuButtonClickedEvent>(this.MainMenuButtonClicked);
-		EventManager.Instance.RemoveListener<PlayButtonClickedEvent>(this.PlayButtonClicked);
-		EventManager.Instance.RemoveListener<ResumeButtonClickedEvent>(this.ResumeButtonClicked);
-		EventManager.Instance.RemoveListener<EscapeButtonClickedEvent>(this.EscapeButtonClicked);
-		EventManager.Instance.RemoveListener<QuitButtonClickedEvent>(this.QuitButtonClicked);
-
-		// Score Item
-		EventManager.Instance.RemoveListener<ScoreItemEvent>(this.ScoreHasBeenGained);
-	}
-
-	#endregion
-
-	#region Callbacks to Events issued by MenuManager
-
-	private void MainMenuButtonClicked(MainMenuButtonClickedEvent e) {
-		this.Menu();
-	}
-
-	private void PlayButtonClicked(PlayButtonClickedEvent e) {
-		this.Play();
-	}
-
-	private void ResumeButtonClicked(ResumeButtonClickedEvent e) {
-		this.Resume();
-	}
-
-	private void EscapeButtonClicked(EscapeButtonClickedEvent e) {
-		if (this.IsPlaying)
-			this.Pause();
-	}
-
-	private void QuitButtonClicked(QuitButtonClickedEvent e) {
-		Application.Quit();
-	}
-
-	#endregion
-
-	#region GameState methods
-
-	private void Menu() {
-		this.SetTimeScale(1);
-		this.gameState = GameState.GAME_MENU;
-		if (MusicLoopsManager.Instance)
-			MusicLoopsManager.Instance.PlayMusic(Constants.MENU_MUSIC);
-		EventManager.Instance.Raise(new GameMenuEvent());
+	private void OnDestroy() {
+		EventManager.Instance.RemoveListener<LevelLaunchEvent>(this.OnLevelLaunch);
+		EventManager.Instance.RemoveListener<LevelWonEvent>(this.OnLevelWon);
+		EventManager.Instance.RemoveListener<LevelLostEvent>(this.OnLevelLost);
+		// Title Screen
+		this.playButton.onClick.RemoveListener(this.Play);
+		this.quitButton.onClick.RemoveListener(this.Quit);
+		// End Overlay
+		this.continueButton.onClick.RemoveListener(this.Continue);
+		// Pause Overlay
+		this.resumeButton.onClick.RemoveListener(this.Resume);
+		this.restartButton.onClick.RemoveListener(this.Restart);
+		this.returnButton.onClick.RemoveListener(this.Return);
 	}
 
 	private void Play() {
-		this.InitNewGame();
-		this.SetTimeScale(1);
-		this.gameState = GameState.GAME_PLAY;
+		this.gameState = GameState.Hub;
+		this.titleScreen.SetActive(false);
+	}
 
-		if (MusicLoopsManager.Instance)
-			MusicLoopsManager.Instance.PlayMusic(Constants.GAMEPLAY_MUSIC);
-		EventManager.Instance.Raise(new GamePlayEvent());
+	private void Level(string levelName) {
+		this.gameState = GameState.Level;
+		SceneManager.LoadScene("Levels/" + levelName);
+	}
+
+	private void End(string state) {
+		this.gameState = GameState.End;
+		this.levelStateText.text = state;
+		this.endOverlay.SetActive(true);
+	}
+
+	private void Continue() {
+		this.gameState = GameState.Hub;
+		this.endOverlay.SetActive(false);
 	}
 
 	private void Pause() {
-		if (!this.IsPlaying)
-			return;
-
-		this.SetTimeScale(0);
-		this.gameState = GameState.GAME_PAUSE;
-		EventManager.Instance.Raise(new GamePauseEvent());
+		bool isInLevel = this.gameState == GameState.Level;
+		this.gameState = GameState.Pause;
+		this.restartButton.interactable = isInLevel;
+		this.returnButton.interactable = isInLevel;
+		this.pauseOverlay.SetActive(true);
+		Time.timeScale = 0;
 	}
 
 	private void Resume() {
-		if (this.IsPlaying)
-			return;
-
-		this.SetTimeScale(1);
-		this.gameState = GameState.GAME_PLAY;
-		EventManager.Instance.Raise(new GameResumeEvent());
+		this.gameState = SceneManager.GetActiveScene().name == "main" ? GameState.Hub : GameState.Level;
+		Time.timeScale = 1;
 	}
 
-	private void Over() {
-		this.SetTimeScale(0);
-		this.gameState = GameState.GAME_OVER;
-		EventManager.Instance.Raise(new GameOverEvent());
-		if (SfxManager.Instance)
-			SfxManager.Instance.PlaySfx2D(Constants.GAMEOVER_SFX);
+	private void Restart() {
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		Time.timeScale = 1;
 	}
 
-	#endregion
+	private void Return() {
+		this.gameState = GameState.Hub;
+		SceneManager.LoadScene("main");
+		Time.timeScale = 1;
+	}
+
+	private void Quit() {
+		Application.Quit();
+	}
+
+	private void OnLevelLaunch(LevelLaunchEvent e) {
+		this.Level(e.Name);
+	}
+
+	private void OnLevelWon(LevelWonEvent e) {
+		this.Money += e.Coins;
+		this.End("Victoire! +" + e.Coins);
+	}
+
+	private void OnLevelLost(LevelLostEvent e) {
+		this.End("Défaite :(");
+	}
 }

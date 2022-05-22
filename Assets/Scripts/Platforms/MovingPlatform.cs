@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Platforms {
-	public class MovingPlatform : MonoBehaviour {
+	public class MovingPlatform : PressurePlatePlatform {
 		[SerializeField] private bool useCurrentPosAsFirstCoord = true;
 		[SerializeField, DraggableVector3] private List<Vector3> coordinates;
 		[SerializeField] private float speed = 0.5f;
 		[SerializeField] private float initialDelay;
 		[SerializeField] private float waitDelay;
 		[SerializeField] private AnimationCurve curve;
-
-		private PlatformPressurePlate pressurePlate;
 
 		private void Awake() {
 			if (this.useCurrentPosAsFirstCoord)
@@ -23,7 +21,6 @@ namespace Platforms {
 			}
 			if (!this.useCurrentPosAsFirstCoord)
 				this.transform.position = this.coordinates[0];
-			this.pressurePlate = this.GetComponentInChildren<PlatformPressurePlate>();
 		}
 
 		private IEnumerator Start() {
@@ -47,9 +44,9 @@ namespace Platforms {
 				Vector3 before = this.transform.position;
 				Vector3 after = Vector3.Lerp(from, to, this.curve.Evaluate(progress));
 				this.transform.position = after;
-				if (this.pressurePlate.Player != null) {
+				if (this.PressurePlate.Player != null) {
 					Vector3 delta = after - before;
-					this.pressurePlate.Player.ForceMove(delta);
+					this.PressurePlate.Player.ForceMove(delta);
 				}
 				yield return null;
 			}

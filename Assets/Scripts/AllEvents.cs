@@ -60,6 +60,14 @@ public class CheckpointReachedEvent : FlagReachedEvent {
 public class EndReachedEvent : FlagReachedEvent {
 	public EndReachedEvent(Flag flag) : base(flag) {}
 }
+/// <summary>Level should be launched</summary>
+public class LevelLaunchEvent : Event {
+	public string Name { get; }
+
+	public LevelLaunchEvent(string name) {
+		this.Name = name;
+	}
+}
 /// <summary>Level has been started</summary>
 public class LevelStartedEvent : Event {
 	public float Time { get; }
@@ -169,6 +177,7 @@ public class SpringObjectPickedUpEvent : ObjectPickedUpEvent<SpringObject> {
 
 #region Effects Events
 
+/// <summary>Effect has been activated</summary>
 public class EffectActivatedEvent : Event {
 	public EffectsManager Manager { get; }
 	public Effect Effect { get; }
@@ -180,21 +189,13 @@ public class EffectActivatedEvent : Event {
 		this.Strengh = strengh;
 	}
 }
+/// <summary>Effects durations have been updated</summary>
 public class EffectsUpdatedEvent : Event {
 	public Dictionary<Effect, float> Durations { get; }
 
 	public EffectsUpdatedEvent(Dictionary<Effect, float> durations) {
 		this.Durations = durations;
 	}
-}
-
-#endregion
-
-#region Score Event
-
-/// <summary>???</summary>
-public class ScoreItemEvent : Event {
-	public float eScore;
 }
 
 #endregion

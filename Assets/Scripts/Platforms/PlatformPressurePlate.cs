@@ -23,4 +23,16 @@ namespace Platforms {
 			this.IsActivated = false;
 		}
 	}
+
+	public class PressurePlatePlatform : MonoBehaviour {
+		private PlatformPressurePlate pressurePlate;
+
+		protected PlatformPressurePlate PressurePlate {
+			get {
+				if (this.pressurePlate == null)
+					this.pressurePlate = this.GetComponentInChildren<PlatformPressurePlate>();
+				return this.pressurePlate;
+			}
+		}
+	}
 }
