@@ -689,7 +689,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 15, y: 15}
-  m_SizeDelta: {x: 800, y: 50}
+  m_SizeDelta: {x: 800, y: 125}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &7061759824625806067
 CanvasRenderer:
@@ -726,13 +726,13 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Clo\xE9 BERTHELIN, Jenny CAO, Chang GAO & Th\xE9o SZANTO"
+  m_Text: "Clo\xE9 BERTHELIN ()\nJenny CAO ()\nChang GAO ()\nTh\xE9o SZANTO ()"
 --- !u!1 &6948259720712098684
 GameObject:
   m_ObjectHideFlags: 0

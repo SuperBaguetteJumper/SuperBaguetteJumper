@@ -37,6 +37,7 @@ public class Player : MonoBehaviour {
 	public Vector3 LookPosition => this.cameraContainer.position;
 	public Vector3 LookDirection => this.cameraContainer.forward;
 	public bool ViewLocked { get; set; }
+	public bool CanMove { get; set; } = true;
 
 	public float SpeedModifier { get; private set; }
 	public float JumpModifier { get; private set; }
@@ -56,9 +57,6 @@ public class Player : MonoBehaviour {
 		this.SpeedModifier = 1;
 		this.JumpModifier = 1;
 		this.spawnCam = this.cameraContainer.localEulerAngles.x;
-		// TODO move in game manager
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
 		EventManager.Instance.AddListener<PlayerSpawnedEvent>(this.OnPlayerSpawned);
 		EventManager.Instance.AddListener<PlayerTrappedEvent>(this.OnPlayerTrapped);
 		EventManager.Instance.AddListener<EffectActivatedEvent>(this.OnEffectActivated);
@@ -79,8 +77,8 @@ public class Player : MonoBehaviour {
 	private void FixedUpdate() {
 		// Get player & controls status
 		bool onGround = this.OnGround;
-		float vInput = Input.GetAxis("Vertical");
-		float hInput = Input.GetAxis("Horizontal");
+		float vInput = this.CanMove ? Input.GetAxis("Vertical") : 0;
+		float hInput = this.CanMove ? Input.GetAxis("Horizontal") : 0;
 		float mouseXInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse X");
 		float mouseYInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse Y");
 

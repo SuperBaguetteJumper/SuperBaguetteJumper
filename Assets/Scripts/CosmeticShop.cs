@@ -13,6 +13,7 @@ public class CosmeticShop : MonoBehaviour {
 	[SerializeField] private GameObject buyOverlay;
 	[SerializeField] private Button confirmBuy;
 	[SerializeField] private Button cancelBuy;
+	[SerializeField] private Text statusText;
 
 	[field: NonSerialized]
 	public Cosmetic Cosmetic { get; set; }
@@ -58,24 +59,30 @@ public class CosmeticShop : MonoBehaviour {
 		if (e.Success) {
 			EventManager.Instance.Raise(new CosmeticUnlockedEvent(this.Cosmetic, this.player));
 			this.CloseBuyOverlay();
-		} else
-			Debug.Log("Not enough money!");
+		}
 	}
 
 	private void OpenBuyOverlay() {
 		ShopOpen = true;
+		bool canUnlock = !this.Cosmetic.IsUnlocked;
+		bool canAfford = GameManager.Instance.Money >= this.Cosmetic.Cost;
+		this.confirmBuy.interactable = canUnlock && canAfford;
+		if (canUnlock)
+			this.statusText.text = canAfford ? "Achetable !" : "Pas assez d'argent";
+		else
+			this.statusText.text = "Débloqué le " + this.Cosmetic.UnlockDate.ToString("dd/MM/yyyy' à 'HH:mm:ss");
 		this.buyOverlay.SetActive(true);
-		Cursor.lockState = CursorLockMode.None;
-		Cursor.visible = true;
+		GameManager.UnlockCursor();
 		this.player.ViewLocked = true;
+		this.player.CanMove = false;
 	}
 
 	private void CloseBuyOverlay() {
 		ShopOpen = false;
 		this.buyOverlay.SetActive(false);
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
+		GameManager.LockCursor();
 		this.player.ViewLocked = false;
+		this.player.CanMove = true;
 	}
 
 	public void RefreshModel() {

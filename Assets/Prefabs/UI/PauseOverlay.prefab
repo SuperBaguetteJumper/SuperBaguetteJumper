@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 7991556681733312080}
   - component: {fileID: 3442307862876340232}
   m_Layer: 5
-  m_Name: ContinueButton
+  m_Name: ResumeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

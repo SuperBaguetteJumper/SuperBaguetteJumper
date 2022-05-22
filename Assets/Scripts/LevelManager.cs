@@ -3,6 +3,7 @@ using Elements.Flags;
 using Events;
 using Objects;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
 	[Header("Level Manager")]
@@ -28,7 +29,8 @@ public class LevelManager : MonoBehaviour {
 		get => this._coins;
 		set {
 			this._coins = value;
-			EventManager.Instance.Raise(new MoneyUpdatedEvent(value));
+			if (SceneManager.GetActiveScene().name != "main")
+				EventManager.Instance.Raise(new MoneyUpdatedEvent(value));
 		}
 	}
 
@@ -50,7 +52,8 @@ public class LevelManager : MonoBehaviour {
 		this.lives = this.initialLives;
 		EventManager.Instance.Raise(new LevelStartedEvent(Time.time));
 		EventManager.Instance.Raise(new PlayerSpawnedEvent(this.start.transform));
-		EventManager.Instance.Raise(new MoneyUpdatedEvent(this.coins));
+		if (SceneManager.GetActiveScene().name != "main")
+			EventManager.Instance.Raise(new MoneyUpdatedEvent(this.coins));
 	}
 
 	private void OnDestroy() {
@@ -68,17 +71,14 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	private void OnEndReached(EndReachedEvent e) {
-		if (e.Flag == this.end) {
-			Debug.Log("You won!");
+		if (e.Flag == this.end)
 			EventManager.Instance.Raise(new LevelWonEvent(this.coins));
-		}
 	}
 
 	private void OnPlayerDied(PlayerDiedEvent e) {
-		if (this.lives <= 0) {
-			Debug.Log("You lost!");
+		if (this.lives <= 0)
 			EventManager.Instance.Raise(new LevelLostEvent());
-		} else {
+		else {
 			this.lives--;
 			for (int i = 0; i < this.collectibles.Length; i++)
 				if (this.collectibles[i].ReactivateOnRespawn)

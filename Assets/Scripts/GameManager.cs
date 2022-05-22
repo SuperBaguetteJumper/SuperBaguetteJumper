@@ -21,6 +21,7 @@ public class GameManager : Singleton<GameManager> {
 	[SerializeField] private GameObject endOverlay;
 	[SerializeField] private Text levelStateText;
 	[SerializeField] private Button continueButton;
+	[SerializeField] private Button retryButton;
 	[Header("Pause Overlay")]
 	[SerializeField] private GameObject pauseOverlay;
 	[SerializeField] private Button resumeButton;
@@ -28,12 +29,17 @@ public class GameManager : Singleton<GameManager> {
 	[SerializeField] private Button returnButton;
 
 	private GameState gameState;
+	private string level;
 
 	public bool IsPlaying => this.gameState == GameState.Hub || this.gameState == GameState.Level;
 
 	public int Money {
 		get => PlayerPrefs.GetInt("Money", 0);
-		private set => PlayerPrefs.SetInt("Money", value);
+		private set {
+			PlayerPrefs.SetInt("Money", value);
+			if (value != 0)
+				EventManager.Instance.Raise(new MoneyUpdatedEvent(value));
+		}
 	}
 
 	protected override void Awake() {
@@ -42,11 +48,13 @@ public class GameManager : Singleton<GameManager> {
 		EventManager.Instance.AddListener<LevelLaunchEvent>(this.OnLevelLaunch);
 		EventManager.Instance.AddListener<LevelWonEvent>(this.OnLevelWon);
 		EventManager.Instance.AddListener<LevelLostEvent>(this.OnLevelLost);
+		EventManager.Instance.AddListener<MoneyWithdrawEvent>(this.OnMoneyWithdraw);
 		// Title Screen
 		this.playButton.onClick.AddListener(this.Play);
 		this.quitButton.onClick.AddListener(this.Quit);
 		// End Overlay
 		this.continueButton.onClick.AddListener(this.Continue);
+		this.retryButton.onClick.AddListener(this.Retry);
 		// Pause Overlay
 		this.resumeButton.onClick.AddListener(this.Resume);
 		this.restartButton.onClick.AddListener(this.Restart);
@@ -54,8 +62,10 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private void Start() {
+		EventManager.Instance.Raise(new MoneyUpdatedEvent(this.Money));
 		this.gameState = GameState.TitleScreen;
 		this.titleScreen.SetActive(true);
+		Time.timeScale = 0;
 	}
 
 	private void Update() {
@@ -73,11 +83,13 @@ public class GameManager : Singleton<GameManager> {
 		EventManager.Instance.RemoveListener<LevelLaunchEvent>(this.OnLevelLaunch);
 		EventManager.Instance.RemoveListener<LevelWonEvent>(this.OnLevelWon);
 		EventManager.Instance.RemoveListener<LevelLostEvent>(this.OnLevelLost);
+		EventManager.Instance.RemoveListener<MoneyWithdrawEvent>(this.OnMoneyWithdraw);
 		// Title Screen
 		this.playButton.onClick.RemoveListener(this.Play);
 		this.quitButton.onClick.RemoveListener(this.Quit);
 		// End Overlay
 		this.continueButton.onClick.RemoveListener(this.Continue);
+		this.retryButton.onClick.RemoveListener(this.Retry);
 		// Pause Overlay
 		this.resumeButton.onClick.RemoveListener(this.Resume);
 		this.restartButton.onClick.RemoveListener(this.Restart);
@@ -87,22 +99,37 @@ public class GameManager : Singleton<GameManager> {
 	private void Play() {
 		this.gameState = GameState.Hub;
 		this.titleScreen.SetActive(false);
+		Time.timeScale = 1;
+		LockCursor();
 	}
 
 	private void Level(string levelName) {
 		this.gameState = GameState.Level;
-		SceneManager.LoadScene("Levels/" + levelName);
+		this.level = levelName;
+		SceneManager.LoadSceneAsync(this.level);
+		Time.timeScale = 1;
+		LockCursor();
 	}
 
-	private void End(string state) {
+	private void End(string state, bool canRetry) {
 		this.gameState = GameState.End;
+		SceneManager.LoadSceneAsync("main");
 		this.levelStateText.text = state;
+		this.retryButton.interactable = canRetry;
 		this.endOverlay.SetActive(true);
+		Time.timeScale = 0;
+		UnlockCursor();
 	}
 
 	private void Continue() {
 		this.gameState = GameState.Hub;
 		this.endOverlay.SetActive(false);
+		Time.timeScale = 1;
+		LockCursor();
+	}
+
+	private void Retry() {
+		this.Level(this.level);
 	}
 
 	private void Pause() {
@@ -112,22 +139,30 @@ public class GameManager : Singleton<GameManager> {
 		this.returnButton.interactable = isInLevel;
 		this.pauseOverlay.SetActive(true);
 		Time.timeScale = 0;
+		UnlockCursor();
 	}
 
 	private void Resume() {
 		this.gameState = SceneManager.GetActiveScene().name == "main" ? GameState.Hub : GameState.Level;
+		this.pauseOverlay.SetActive(false);
 		Time.timeScale = 1;
+		LockCursor();
 	}
 
 	private void Restart() {
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		SceneManager.LoadSceneAsync(this.level);
+		this.pauseOverlay.SetActive(false);
 		Time.timeScale = 1;
+		LockCursor();
 	}
 
 	private void Return() {
 		this.gameState = GameState.Hub;
-		SceneManager.LoadScene("main");
+		SceneManager.LoadSceneAsync("main");
+		EventManager.Instance.Raise(new MoneyUpdatedEvent(this.Money));
+		this.pauseOverlay.SetActive(false);
 		Time.timeScale = 1;
+		LockCursor();
 	}
 
 	private void Quit() {
@@ -135,15 +170,32 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private void OnLevelLaunch(LevelLaunchEvent e) {
-		this.Level(e.Name);
+		this.Level("Scenes/Levels/" + e.Name);
 	}
 
 	private void OnLevelWon(LevelWonEvent e) {
 		this.Money += e.Coins;
-		this.End("Victoire! +" + e.Coins);
+		this.End("Victoire! +" + e.Coins, false);
 	}
 
 	private void OnLevelLost(LevelLostEvent e) {
-		this.End("Défaite :(");
+		this.End("Défaite :(", true);
+	}
+
+	private void OnMoneyWithdraw(MoneyWithdrawEvent e) {
+		if (e.Amount <= this.Money) {
+			this.Money -= e.Amount;
+			e.Success = true;
+		}
+	}
+
+	public static void LockCursor() {
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+	}
+
+	public static void UnlockCursor() {
+		Cursor.lockState = CursorLockMode.None;
+		Cursor.visible = true;
 	}
 }

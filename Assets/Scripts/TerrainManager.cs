@@ -45,6 +45,7 @@ public class TerrainManager : MonoBehaviour {
 		if (this.Tiles.ContainsKey(key))
 			return this.Tiles[key];
 		GameObject terrain = Terrain.CreateTerrainGameObject(new TerrainData());
+		terrain.transform.parent = this.transform;
 		terrain.name = $"TerrainTile.{key}";
 		terrain.transform.position = new Vector3(x * this.Size, (float) -this.coords.y, z * this.Size);
 		//terrain.transform.localScale = new Vector3(1f / this.Resolution, 1, 1f / this.Resolution);
