@@ -1,6 +1,6 @@
 using System;
 using Events;
-using UnityEditor.Experimental.SceneManagement;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -79,7 +79,7 @@ public class CosmeticShop : MonoBehaviour {
 	}
 
 	public void RefreshModel() {
-		if (this.Cosmetic == null || this.instanceContainer == null || PrefabStageUtility.GetCurrentPrefabStage() != null || this.instanceContainer.gameObject.scene.name == null)
+		if (this.Cosmetic == null || this.instanceContainer == null || UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null || this.instanceContainer.gameObject.scene.name == null)
 			return;
         this.ClearModel();
         GameObject model = Instantiate(this.Cosmetic.Model, this.instanceContainer);
