@@ -50,7 +50,7 @@ namespace Elements {
 
 			// Transform texture to material
 			Texture ortho = DownloadHandlerTexture.GetContent(textureRequest);
-			Material material = new Material(Shader.Find("Unlit/Texture"));
+			Material material = new Material(Shader.Find("Standard"));
 			material.mainTexture = ortho;
  
 			// Apply to terrain
