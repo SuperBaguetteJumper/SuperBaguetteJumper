@@ -12,6 +12,7 @@ public class TerrainManager : MonoBehaviour {
 	[SerializeField] private int maxConcurrentGenerations = 4;
 	[SerializeField] private int minMaxEvaluationScale = 5;
 	[SerializeField] private int minMaxEvaluationSampling = 16;
+	[field: SerializeField] public Shader Shader { get; private set; }
 
 	public float MinHeight { get; private set; }
 	public float MaxHeight { get; private set; }
