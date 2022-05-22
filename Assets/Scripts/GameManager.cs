@@ -132,6 +132,7 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private void Retry() {
+		this.endOverlay.SetActive(false);
 		this.Level(this.level);
 	}
 
