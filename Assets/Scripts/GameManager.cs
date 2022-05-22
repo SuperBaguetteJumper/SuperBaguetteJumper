@@ -17,6 +17,10 @@ public class GameManager : Singleton<GameManager> {
 	[SerializeField] private GameObject titleScreen;
 	[SerializeField] private Button playButton;
 	[SerializeField] private Button quitButton;
+	[SerializeField] private Slider volumeSlider;
+	[SerializeField] private Text volumeText;
+	[SerializeField] private Slider sensitivitySlider;
+	[SerializeField] private Text sensitivityText;
 	[Header("End Overlay")]
 	[SerializeField] private GameObject endOverlay;
 	[SerializeField] private Text levelStateText;
@@ -53,6 +57,8 @@ public class GameManager : Singleton<GameManager> {
 		// Title Screen
 		this.playButton.onClick.AddListener(this.Play);
 		this.quitButton.onClick.AddListener(this.Quit);
+		this.volumeSlider.onValueChanged.AddListener(this.Volume);
+		this.sensitivitySlider.onValueChanged.AddListener(this.Sensitivity);
 		// End Overlay
 		this.continueButton.onClick.AddListener(this.Continue);
 		this.retryButton.onClick.AddListener(this.Retry);
@@ -68,6 +74,13 @@ public class GameManager : Singleton<GameManager> {
 		this.gameState = GameState.TitleScreen;
 		this.titleScreen.SetActive(true);
 		Time.timeScale = 0;
+
+		Button[] buttons = FindObjectsOfType<Button>(true);
+		for (int i = 0; i < buttons.Length; i++) 
+			buttons[i].onClick.AddListener(this.Click);
+
+		this.volumeSlider.value = PlayerPrefs.GetFloat("Volume", 1);
+		this.sensitivitySlider.value = PlayerPrefs.GetFloat("Sensitivity", 1);
 	}
 
 	private void Update() {
@@ -89,6 +102,8 @@ public class GameManager : Singleton<GameManager> {
 		// Title Screen
 		this.playButton.onClick.RemoveListener(this.Play);
 		this.quitButton.onClick.RemoveListener(this.Quit);
+		this.volumeSlider.onValueChanged.RemoveListener(this.Volume);
+		this.sensitivitySlider.onValueChanged.RemoveListener(this.Sensitivity);
 		// End Overlay
 		this.continueButton.onClick.RemoveListener(this.Continue);
 		this.retryButton.onClick.RemoveListener(this.Retry);
@@ -97,6 +112,10 @@ public class GameManager : Singleton<GameManager> {
 		this.restartButton.onClick.RemoveListener(this.Restart);
 		this.returnButton.onClick.RemoveListener(this.Return);
 		this.menuButton.onClick.RemoveListener(this.Menu);
+
+		Button[] buttons = FindObjectsOfType<Button>(true);
+		for (int i = 0; i < buttons.Length; i++) 
+			buttons[i].onClick.RemoveListener(this.Click);
 	}
 
 	private void Play() {
@@ -180,7 +199,24 @@ public class GameManager : Singleton<GameManager> {
 		Application.Quit();
 	}
 
+	private void Click() {
+		SfxManager.Instance.PlaySfx2D("Click");
+	}
+
+	private void Volume(float volume) {
+		PlayerPrefs.SetFloat("Volume", volume);
+		this.volumeText.text = "Volume : " + volume.ToString("F2");
+		AudioListener.volume = volume;
+	}
+
+	private void Sensitivity(float sensitivity) {
+		PlayerPrefs.SetFloat("Sensitivity", sensitivity);
+		this.sensitivityText.text = "Sensibilité : " + sensitivity.ToString("F2");
+		Player.Sensitivity = sensitivity;
+	}
+
 	private void OnLevelLaunch(LevelLaunchEvent e) {
+		SfxManager.Instance.PlaySfx2D("Portal");
 		this.Level("Scenes/Levels/" + e.Name);
 	}
 
@@ -190,6 +226,7 @@ public class GameManager : Singleton<GameManager> {
 	}
 
 	private void OnLevelLost(LevelLostEvent e) {
+		SfxManager.Instance.PlaySfx2D("GameOver");
 		this.End("Défaite :(", true);
 	}
 

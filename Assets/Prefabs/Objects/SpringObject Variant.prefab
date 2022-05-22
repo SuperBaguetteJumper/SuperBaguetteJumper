@@ -92,4 +92,5 @@ MonoBehaviour:
   model: {fileID: 6066666352092404731, guid: c097c26b5c269bd49822e27900aca3d4, type: 3}
   scale: 0.6
   offset: 0.17
+  sound: RessortBoing
   <Force>k__BackingField: 10

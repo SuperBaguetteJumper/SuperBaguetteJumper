@@ -1,4 +1,5 @@
 using System.Collections;
+using Common;
 using Events;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour {
 	[SerializeField] private float yRecoveryStrengh = 10;
 
 	private float spawnCam;
+	private bool falling;
 
 	private Vector3 center {
 		get => this.rigidbody.position + this.transform.TransformVector(this.collider.center);
@@ -46,9 +48,12 @@ public class Player : MonoBehaviour {
 	public new CapsuleCollider collider { get; private set; }
 
 	private static readonly float ROTATION_EPSILON = 0.001f;
+	public static float Sensitivity { get; set; } = 1;
 
 	private void Die() {
 		EventManager.Instance.Raise(new PlayerDiedEvent());
+		this.falling = false;
+		this.CanMove = true;
 	}
 
 	private void Awake() {
@@ -77,10 +82,10 @@ public class Player : MonoBehaviour {
 	private void FixedUpdate() {
 		// Get player & controls status
 		bool onGround = this.OnGround;
-		float vInput = this.CanMove ? Input.GetAxis("Vertical") : 0;
-		float hInput = this.CanMove ? Input.GetAxis("Horizontal") : 0;
-		float mouseXInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse X");
-		float mouseYInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse Y");
+		float vInput = this.CanMove ? Input.GetAxis("Vertical") * Sensitivity : 0;
+		float hInput = this.CanMove ? Input.GetAxis("Horizontal") * Sensitivity : 0;
+		float mouseXInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse X") * Sensitivity;
+		float mouseYInput = this.ViewLocked ? 0 : Input.GetAxisRaw("Mouse Y") * Sensitivity;
 
 		// Compute move modifier
 		float moveModifier = this.SpeedModifier;
@@ -95,7 +100,7 @@ public class Player : MonoBehaviour {
 
 		// Calculate move & rotation
 		Vector3 moveVect = moveModifier * Time.fixedDeltaTime * this.moveSpeed * Vector3.ProjectOnPlane(vInput * this.transform.forward + hInput * this.transform.right, Vector3.up).normalized;
-		float yRot = Time.fixedDeltaTime * this.rotationSpeed * 90 * mouseXInput;
+		float yRot = Time.fixedDeltaTime * this.rotationSpeed * 30 * mouseXInput;
 		if (yRot < ROTATION_EPSILON && yRot > -ROTATION_EPSILON)
 			yRot = 0;
 		Quaternion qRot = Quaternion.AngleAxis(yRot, this.transform.up);
@@ -109,23 +114,29 @@ public class Player : MonoBehaviour {
 
 		// Rotate camera (up / down)
 		Vector3 angle = this.cameraContainer.localEulerAngles;
-		float xRot = Time.fixedDeltaTime * this.rotationSpeed * 90 * mouseYInput;
+		float xRot = Time.fixedDeltaTime * this.rotationSpeed * 30 * mouseYInput;
 		if (xRot < ROTATION_EPSILON && xRot > -ROTATION_EPSILON)
 			xRot = 0;
 		this.cameraContainer.localEulerAngles = new Vector3(LimitCameraRot(angle.x - xRot), angle.y, angle.z);
 
 		// Handle jump
-		bool jumping = Input.GetButton("Jump");
-		if (onGround && jumping)
-			this.rigidbody.AddForce(this.transform.up * (this.jumpStrengh * this.JumpModifier), ForceMode.Impulse);
-		if (this.rigidbody.velocity.y < 0 && !onGround)
-			this.rigidbody.velocity += Physics.gravity * (this.fallModifier * Time.fixedDeltaTime);
-		else if (this.rigidbody.velocity.y > 0 && !jumping)
-			this.rigidbody.velocity += Physics.gravity * (this.instaJumpModifier * Time.fixedDeltaTime);
+		if (this.CanMove) {
+			bool jumping = Input.GetButton("Jump");
+			if (onGround && jumping)
+            	this.rigidbody.AddForce(this.transform.up * (this.jumpStrengh * this.JumpModifier), ForceMode.Impulse);
+            if (this.rigidbody.velocity.y < 0 && !onGround)
+            	this.rigidbody.velocity += Physics.gravity * (this.fallModifier * Time.fixedDeltaTime);
+            else if (this.rigidbody.velocity.y > 0 && !jumping)
+            	this.rigidbody.velocity += Physics.gravity * (this.instaJumpModifier * Time.fixedDeltaTime);
+		} else
+			this.rigidbody.velocity = Vector3.zero;
 
 		// Kill player when too low
-		if (this.rigidbody.position.y < -10)
-			this.Die();
+		if (this.rigidbody.position.y < -10 && !this.falling) {
+			this.falling = true;
+			SfxManager.Instance.PlaySfx2D("Falling");
+			this.Invoke("Die", 1.7f);
+		}
 	}
 
 	public void ForceMove(Vector3 move) {
@@ -156,7 +167,9 @@ public class Player : MonoBehaviour {
 	}
 
 	private void OnPlayerTrapped(PlayerTrappedEvent e) {
-		this.Die();
+		SfxManager.Instance.PlaySfx2D("Spikes");
+		this.CanMove = false;
+		this.Invoke("Die", 0.5f);
 	}
 
 	private void OnEffectActivated(EffectActivatedEvent e) {

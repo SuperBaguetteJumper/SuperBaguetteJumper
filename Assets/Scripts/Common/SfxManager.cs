@@ -27,14 +27,13 @@ namespace Common {
 		[SerializeField] private int nAudioSources = 2;
 		[SerializeField] private GameObject audioSourceModel;
 
-		[SerializeField] private bool showGui;
-
 		private readonly List<AudioSource> audioSources = new List<AudioSource>();
 		private readonly Dictionary<string, MyAudioClip> dicoAudioClips = new Dictionary<string, MyAudioClip>();
 
 		// Use this for initialization
 		private void Start() {
-			var xmlDoc = new XmlDocument();
+			CsharpUtils.FixCsharpBadDecimalSeparator();
+			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.LoadXml(this.sfxXmlSetup.text);
 
 			foreach (XmlNode node in xmlDoc.GetElementsByTagName("SFX"))
@@ -48,36 +47,20 @@ namespace Common {
 					);
 
 			this.audioSources.Add(this.audioSourceModel.GetComponent<AudioSource>());
-			for (var i = 0; i < this.nAudioSources - 1; i++)
+			for (int i = 0; i < this.nAudioSources - 1; i++)
 				this.AddAudioSource();
 		}
 
-		private void OnGUI() {
-			if (!this.showGui)
-				return;
-
-			GUILayout.BeginArea(new Rect(Screen.width * .5f + 10, 10, 200, Screen.height));
-			GUILayout.Label("SFX MANAGER");
-			GUILayout.Space(20);
-			foreach (var item in this.dicoAudioClips)
-				if (GUILayout.Button("PLAY " + item.Key))
-					PlaySfx2D(item.Key);
-			GUILayout.EndArea();
-		}
-
-		private AudioSource AddAudioSource() {
-			var newGO = Instantiate(this.audioSourceModel);
+		private void AddAudioSource() {
+			GameObject newGO = Instantiate(this.audioSourceModel, this.transform);
 			newGO.name = "AudioSource";
-			newGO.transform.parent = this.transform;
 
-			var audioSource = newGO.GetComponent<AudioSource>();
+			AudioSource audioSource = newGO.GetComponent<AudioSource>();
 			this.audioSources.Add(audioSource);
 
 			audioSource.loop = false;
 			audioSource.playOnAwake = false;
 			audioSource.spatialBlend = 1;
-
-			return audioSource;
 		}
 
 		public void PlaySfx3D(string sfxName, Vector3 pos) {
@@ -89,9 +72,6 @@ namespace Common {
 		}
 
 		private void PlaySfx(string sfxName, Vector3 pos) {
-			if (FlagsManager.Instance && !FlagsManager.Instance.GetFlag("SETTINGS_SFX", true))
-				return;
-
 			MyAudioClip audioClip;
 			if (!this.dicoAudioClips.TryGetValue(sfxName, out audioClip)) {
 				Debug.LogError("SFX, no audio clip with name: " + sfxName);

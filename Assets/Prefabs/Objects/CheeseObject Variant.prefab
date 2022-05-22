@@ -87,5 +87,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ff7b0d568cd4cadbc5061bcbe52dc61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCollectible: 1
+  <IsCollectible>k__BackingField: 1
+  <ReactivateOnRespawn>k__BackingField: 1
   model: {fileID: 7730174464481383930, guid: a80f75af29185d2458adaa4ee230a7cd, type: 3}
+  scale: 0.4
+  offset: 0.3
+  sound: Cheese
+  <Duration>k__BackingField: 5
+  <Strengh>k__BackingField: 0.4

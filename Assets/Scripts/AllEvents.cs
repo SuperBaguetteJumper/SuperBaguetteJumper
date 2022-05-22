@@ -1,46 +1,8 @@
 ﻿using System.Collections.Generic;
-using Elements.Flags;
+using Elements;
 using Objects;
 using UnityEngine;
 using Event = Events.Event;
-
-#region GameManager Events
-
-/// <summary>Game is now in the menu state</summary>
-public class GameMenuEvent : Event {}
-/// <summary>Game is now in the play state</summary>
-public class GamePlayEvent : Event {}
-/// <summary>Game is now in the pause state</summary>
-public class GamePauseEvent : Event {}
-/// <summary>Game switched from the pause state to the play state</summary>
-public class GameResumeEvent : Event {}
-/// <summary>Game is now in the over state</summary>
-public class GameOverEvent : Event {}
-/// <summary>Game is now in the victory state</summary>
-public class GameVictoryEvent : Event {}
-/// <summary>Game statistics has changed</summary>
-public class GameStatisticsChangedEvent : Event {
-	public float eBestScore { get; set; }
-	public float eScore { get; set; }
-	public int eNLives { get; set; }
-}
-
-#endregion
-
-#region MenuManager Events
-
-/// <summary>Escape menu button has been clicked</summary>
-public class EscapeButtonClickedEvent : Event {}
-/// <summary>Play menu button has been clicked</summary>
-public class PlayButtonClickedEvent : Event {}
-/// <summary>Resume menu button has been clicked</summary>
-public class ResumeButtonClickedEvent : Event {}
-/// <summary>Main menu button has been clicked</summary>
-public class MainMenuButtonClickedEvent : Event {}
-/// <summary>Quit menu button has been clicked</summary>
-public class QuitButtonClickedEvent : Event {}
-
-#endregion
 
 #region Level Events
 

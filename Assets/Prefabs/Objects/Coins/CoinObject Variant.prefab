@@ -92,4 +92,5 @@ MonoBehaviour:
   model: {fileID: 0}
   scale: 0.4
   offset: 0.3
+  sound: Coin
   <Value>k__BackingField: 1

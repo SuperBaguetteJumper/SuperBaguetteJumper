@@ -1,3 +1,4 @@
+using Common;
 using UnityEngine;
 
 namespace Objects {
@@ -9,6 +10,7 @@ namespace Objects {
 		[SerializeField] private GameObject model;
 		[SerializeField] private float scale = 0.4f;
 		[SerializeField] private float offset = 0.3f;
+		[SerializeField] private string sound;
 
 		private GameObject modelInstance;
 		private bool hasNoActiveInstance = true;
@@ -36,6 +38,8 @@ namespace Objects {
 				return;
 			if (this.OnCollect() && this.IsCollectible)
 				this.gameObject.SetActive(false);
+			if (this.sound != null && this.sound.Length != 0)
+				SfxManager.Instance.PlaySfx2D(this.sound);
 		}
 
 		private void OnDestroy() {

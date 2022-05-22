@@ -87,9 +87,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7579725ec69f42bf97e70ecffba343d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCollectible: 1
+  <IsCollectible>k__BackingField: 1
+  <ReactivateOnRespawn>k__BackingField: 1
   model: {fileID: 3997109519507377709, guid: 9986397ff92ba194b8dfa127be54a524, type: 3}
   scale: 0.045
   offset: 0.3
+  sound: Wine
   <Duration>k__BackingField: 5
   <Strengh>k__BackingField: 0.4

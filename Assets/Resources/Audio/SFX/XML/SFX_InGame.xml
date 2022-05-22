@@ -1,8 +1,15 @@
 <SFX_SETUP>
-    <SFX name="Button" volume="1"/>
-    <SFX name="Selection" volume="1"/>
-    <SFX name="LetsGo" volume="1"/>
-    <SFX name="Tick" volume="1"/>
-    <SFX name="Victory" volume="1"/>
-    <SFX name="GameOver" volume="1"/>
+    <SFX name="Checkpoint" volume="0.7" />
+    <SFX name="Cheese" volume="0.8" />
+    <SFX name="Click" volume="1" />
+    <SFX name="Coin" volume="1" />
+    <SFX name="Frog" volume="0.8" />
+    <SFX name="Falling" volume="1" />
+    <SFX name="GameOver" volume="0.8" />
+    <SFX name="Portal" volume="0.9" />
+    <SFX name="RessortBoing" volume="0.8" />
+    <SFX name="Snail" volume="0.7" />
+    <SFX name="Spikes" volume="0.7" />
+    <SFX name="Win" volume="0.8" />
+    <SFX name="Wine" volume="1" />
 </SFX_SETUP>

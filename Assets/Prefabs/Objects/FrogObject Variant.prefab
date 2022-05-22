@@ -92,5 +92,6 @@ MonoBehaviour:
   model: {fileID: 8260690485094195059, guid: 8989935166a703140bb67d7a4ae3bb46, type: 3}
   scale: 0.4
   offset: 0.3
+  sound: Frog
   <Duration>k__BackingField: 2
   <Strengh>k__BackingField: 0.4

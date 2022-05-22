@@ -122,12 +122,6 @@ public class HUDManager : MonoBehaviour {
 		}
 		for (int i = 0; i < total; i++)
 			Instantiate(i < count ? this.life : this.lifeEmpty, this.healthBar.transform);
-
-		// Fix Unity layout refresh
-		Canvas.ForceUpdateCanvases();
-		HorizontalLayoutGroup layout = this.healthBar.GetComponent<HorizontalLayoutGroup>();
-		layout.enabled = false;
-		layout.enabled = true;
 	}
 
 	private void OnMoneyUpdated(MoneyUpdatedEvent e) {
